@@ -26,4 +26,8 @@ Todas las funcionalidades, escenarios BDD, migraciones, comprobación de persist
 
 ## Decisiones y dudas
 
-Seguir las tecnologías y el contrato HTTP de AGENTS.md. Supuestos y dudas para el contacto registrados en README.md. No se ha publicado ni creado un repositorio remoto.
+Seguir las tecnologías y el contrato HTTP de AGENTS.md. Supuestos y dudas para el contacto registrados en README.md.
+
+## GitHub
+
+Con autorización del usuario se creó el repositorio privado https://github.com/Lujam2299/Prueba-Tecnica y se configuró como `origin`. `git push -u origin main` terminó con código 0; se verificaron en GitHub la etiqueta Private y los cuatro archivos de preparación. Nombre elegido para la URL: Prueba-Tecnica; descripción: Prueba Técnica.
