@@ -13,7 +13,7 @@ Preparación del entorno (11 de octubre de 2026). Se leyeron AGENTS.md y el chat
 - VS Code encontrado en `C:\Users\lujam\AppData\Local\Programs\Microsoft VS Code\Code.exe`.
 - Windows Package Manager instaló correctamente Microsoft.DotNet.SDK.10.
 - `C:\Program Files\dotnet\dotnet.exe --info`: verificado fuera del sandbox, código 0; SDK 10.0.401, runtime ASP.NET Core 10.0.12. Dentro del sandbox la consulta falló por acceso a servicios de Windows.
-- Repositorio local inicializado, rama `main`; sin remoto. Autor solicitado por el usuario: Lujam2299. Primer commit de preparación pendiente de ejecutar.
+- Repositorio local inicializado, rama `main`; sin remoto. Autor solicitado por el usuario: Lujam2299. Primer commit de preparación creado: `a58a197`; `git status --short` quedó sin cambios después del commit.
 - Creados README.md, PROGRESS.md y .gitignore. No se ha implementado la API ni ejecutado pruebas.
 
 ## Siguiente paso
