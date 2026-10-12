@@ -120,4 +120,3 @@ Resultado esperado: creación, consulta y edición de productos verificadas medi
 Estimación inicial: 14–19 horas de trabajo concentrado, repartidas en dos días. Revisaremos el tiempo real al cerrar cada etapa. Si el plazo peligra, recortaremos extras y comunicaremos pendientes sin omitir requisitos.
 
 Al retomar una sesión: leer AGENTS.md, README.md, PROGRESS.md y esta guía; revisar Git; continuar con la primera etapa pendiente. Marcar una casilla requiere evidencia, no solo haber intentado la acción.
-

@@ -108,5 +108,3 @@ Con autorización del usuario se subieron los cinco commits pendientes hasta `4e
 ### Edición de productos: fase roja
 
 19 casos nuevos ejecutados con filtro FullyQualifiedName~EdicionDeProductos: código 1, todos fallidos por HTTP 405, 0 omitidos. Cubren edición, cambio de categoría, descripción opcional, nombres repetidos, validaciones, inexistentes y conservación de datos al reiniciar. Implementación pendiente.
-
-
