@@ -2,6 +2,8 @@
 
 ## Etapa actual
 
+Etapa 3 en curso, fase roja comprobada: escenario ConsultarCuandoNoHayCategorias escrito y bindings HTTP creados. `dotnet test Catalogo.slnx --logger "console;verbosity=normal"` compiló y descubrió 1 escenario; terminó con código 1 porque esperaba 200 y recibió 404 al consultar /api/categories. No es un fallo de configuración. Se usa WebApplicationFactory con una instancia por escenario y cierre en AfterScenario; aún no hay base de datos.
+
 Preparación del entorno (11 de octubre de 2026). Se leyeron AGENTS.md y el chat de planificación completo. Acordado trabajar por etapas y completar el alcance principal en un máximo de dos días.
 
 Etapas 1 y 2 completadas. PLAN.md contiene las casillas de seguimiento. Se crearon Catalogo.slnx, global.json y los dos proyectos para net10.0. Program.cs solo compone y arranca la aplicación; no tiene endpoints. El proyecto de pruebas referencia la API y contiene los paquetes de Reqnroll y NUnit, sin escenarios todavía.
