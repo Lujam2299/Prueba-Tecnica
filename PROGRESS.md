@@ -2,7 +2,13 @@
 
 ## Etapa actual
 
-Etapa 5, productos en fase roja: `dotnet test Catalogo.slnx --no-restore --filter "FullyQualifiedName~CreacionYConsultaDeProductos" --logger "console;verbosity=minimal"`, código 1; 7 casos ejecutados y fallidos, 0 omitidos. Endpoints de creación/lista no existen; detalle inexistente carece de Problem Details. Casos: lista vacía, descripción presente/ausente, persistencia tras reinicio, nombres repetidos, nombre actual de categoría tras renombrarla y detalle inexistente. Escenarios y contrato ProductResponse escritos antes de implementar.
+Etapa 5 en curso: creación válida, lista y detalle de productos completos. Fase roja guardada en `4add51d`: 7 casos fallidos, 0 omitidos, por endpoints pendientes. Casos: lista vacía, descripción presente/ausente, persistencia tras reinicio, nombres repetidos, nombre actual de categoría tras renombrarla y detalle inexistente.
+
+Product, ProductRequest y ProductEndpoints agregados; ProductResponse incluye CategoryId y CategoryName. DbContext agrega Products y relación con categoría con DeleteBehavior.Restrict. Migración AddProducts generada con dotnet-ef, código 0, y aplicada en pruebas. Primera ejecución completa encontró 7 fallos nuevos por traducción de filtros/orden sobre el record proyectado; se corrigió filtrando y ordenando entidades antes de proyectar. Segunda ejecución `dotnet test Catalogo.slnx --no-restore --logger "console;verbosity=minimal"`: código 0, 48 aprobadas (44 BDD y 4 técnicas), 0 omitidas. La base local de aplicación sigue ausente.
+
+Limitación actual: POST de producto implementa solo entradas válidas. Nombre requerido/espacios y categoría ausente/inexistente aún no tienen validación 400; se escribirán sus escenarios en el siguiente bloque. Clave foránea y restricción de eliminación están configuradas en migración, pero sus pruebas directas y rechazos HTTP siguen pendientes. No hay PUT ni DELETE de productos.
+
+### Historial: edición de categorías
 
 Etapa 4 completada: creación, consulta y edición de categorías. Fase roja de edición guardada en `c04d870`: 17 casos nuevos ejecutados y fallidos, 0 omitidos; PUT devolvía 405 y GET inexistente 404 sin Problem Details. Casos: 6 ediciones válidas, 5 nombres inválidos, 3 conflictos Unicode con otra categoría, 2 PUT inexistentes y GET inexistente.
 
@@ -67,11 +73,11 @@ Verificaciones de etapa 2:
 
 ## Siguiente paso
 
-Explicar edición. Después: etapa 5, escenario de creación válida de producto y relación obligatoria con categoría, antes de implementar. Avanzar por comportamientos pequeños, incluyendo consulta con id/nombre de categoría y después validaciones/edición. Usuario con experiencia web, nuevo en C#/.NET; seguir explicando por etapas.
+Explicar productos y relación. Después: escenarios de nombre requerido, blancos y categoría obligatoria/existente en creación; comprobar fallos e implementar errores 400 consistentes sin guardar productos inválidos. Luego edición y cambio de categoría. Usuario con experiencia web, nuevo en C#/.NET; seguir explicando por etapas.
 
 ## Pendientes
 
-Eliminaciones, productos y su relación; cobertura restante de integridad, ejecución limpia, documentación de demostración y guion del video. Creación/consulta/edición de categorías, validaciones, unicidad SQLite/Unicode, migraciones y reinicio persistente ya comprobados.
+Validaciones y edición de productos, eliminaciones de ambas entidades; cobertura restante de integridad/FK, ejecución limpia, documentación de demostración y guion del video. Categorías (creación/consulta/edición y validaciones) y productos válidos (creación/consulta, nombres repetidos y relación observable), migraciones y reinicio persistente ya comprobados.
 
 ## Decisiones y dudas
 

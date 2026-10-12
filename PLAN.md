@@ -4,7 +4,7 @@ Referencia compartida para saber dónde estamos y qué sigue. Actualizaremos las
 
 ## Punto actual
 
-**Etapa 4 completada: creación, consulta y edición de categorías con validaciones.** Suite de 41 pruebas aprobada (37 BDD y 4 técnicas). Lo siguiente es la etapa 5, comenzando por creación válida de productos y su relación con categorías.
+**Etapa 5 en curso: creación válida y consulta de productos completas.** Suite de 48 pruebas aprobada (44 BDD y 4 técnicas). Lo siguiente son validaciones de nombre y categoría de productos, antes de su edición.
 
 ## Ciclo que repetiremos por comportamiento
 
@@ -65,10 +65,11 @@ Resultado esperado: creación, consulta y edición con escenarios aprobados y co
 
 ### 5. Desarrollar productos por comportamientos
 
-- [ ] Definir relación obligatoria con una categoría existente y protegerla con clave foránea.
-- [ ] Crear producto: nombre requerido y descripción opcional; permitir nombres repetidos.
+- [x] Definir relación obligatoria con una categoría existente y protegerla con clave foránea (migración aplicada; pruebas de rechazos pendientes).
+- [x] Crear producto válido con descripción opcional; permitir nombres repetidos.
+- [ ] Validar nombre requerido y quitar blancos externos del nombre de producto.
 - [ ] Rechazar categoría ausente o inexistente con 400.
-- [ ] Consultar lista y detalle mostrando identificador y nombre de categoría.
+- [x] Consultar lista y detalle mostrando identificador y nombre actual de categoría; cubrir detalle inexistente.
 - [ ] Editar producto, incluido cambio de categoría.
 - [ ] Verificar recursos inexistentes y validaciones en edición.
 

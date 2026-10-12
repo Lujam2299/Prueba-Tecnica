@@ -14,11 +14,16 @@ public sealed class CatalogoDbContext : DbContext
     }
 
     public DbSet<Category> Categories => Set<Category>();
+    public DbSet<Product> Products => Set<Product>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Category>().Property(category => category.Name)
             .IsRequired().UseCollation(CategoryNameCollation.Name);
         modelBuilder.Entity<Category>().HasIndex(category => category.Name).IsUnique();
+
+        modelBuilder.Entity<Product>().Property(product => product.Name).IsRequired();
+        modelBuilder.Entity<Product>().HasOne(product => product.Category).WithMany()
+            .HasForeignKey(product => product.CategoryId).OnDelete(DeleteBehavior.Restrict);
     }
 }

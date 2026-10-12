@@ -18,6 +18,7 @@ using (var scope = app.Services.CreateScope())
 }
 
 app.MapCategoryEndpoints();
+app.MapProductEndpoints();
 
 app.Run();
 
