@@ -17,9 +17,7 @@ public static class ProductEndpoints
         {
             var product = await Responses(db.Products.Where(product => product.Id == id)).SingleOrDefaultAsync();
             return product is null
-                ? Results.Problem(statusCode: StatusCodes.Status404NotFound,
-                    title: "Producto no encontrado.",
-                    detail: "No existe un producto con el identificador indicado.")
+                ? ProductNotFound()
                 : Results.Ok(product);
         });
 
@@ -36,23 +34,57 @@ public static class ProductEndpoints
                 CategoryId = request.CategoryId.GetValueOrDefault()
             };
             db.Products.Add(product);
-            try
-            {
-                await db.SaveChangesAsync();
-            }
-            catch (DbUpdateException exception) when
-                (exception.InnerException is SqliteException { SqliteExtendedErrorCode: 787 })
-            {
-                // La base sigue protegiendo la relación si la categoría desaparece antes de guardar.
-                return InvalidProduct(new Dictionary<string, string[]>
-                {
-                    ["CategoryId"] = ["La categoría indicada no existe."]
-                });
-            }
+            if (!await SaveWithoutCategoryConflict(db))
+                return InvalidCategory();
 
             var response = await Responses(db.Products.Where(saved => saved.Id == product.Id)).SingleAsync();
             return Results.Created($"/api/products/{product.Id}", response);
         });
+
+        app.MapPut("/api/products/{id:int}", async (int id, ProductRequest request, CatalogoDbContext db) =>
+        {
+            var product = await db.Products.FindAsync(id);
+            if (product is null)
+                return ProductNotFound();
+
+            var errors = await Validate(request, db);
+            if (errors.Count > 0)
+                return InvalidProduct(errors);
+
+            product.Name = request.Name!.Trim();
+            product.Description = request.Description;
+            product.CategoryId = request.CategoryId.GetValueOrDefault();
+            if (!await SaveWithoutCategoryConflict(db))
+                return InvalidCategory();
+
+            var response = await Responses(db.Products.Where(saved => saved.Id == id)).SingleAsync();
+            return Results.Ok(response);
+        });
+    }
+
+    private static IResult ProductNotFound() =>
+        Results.Problem(statusCode: StatusCodes.Status404NotFound,
+            title: "Producto no encontrado.",
+            detail: "No existe un producto con el identificador indicado.");
+
+    private static IResult InvalidCategory() => InvalidProduct(new Dictionary<string, string[]>
+    {
+        ["CategoryId"] = ["La categoría indicada no existe."]
+    });
+
+    private static async Task<bool> SaveWithoutCategoryConflict(CatalogoDbContext db)
+    {
+        try
+        {
+            await db.SaveChangesAsync();
+            return true;
+        }
+        catch (DbUpdateException exception) when
+            (exception.InnerException is SqliteException { SqliteExtendedErrorCode: 787 })
+        {
+            // La base protege la relación si la categoría desaparece antes de guardar.
+            return false;
+        }
     }
 
     private static async Task<Dictionary<string, string[]>> Validate(ProductRequest request, CatalogoDbContext db)

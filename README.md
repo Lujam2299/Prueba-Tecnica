@@ -4,7 +4,7 @@ Prueba técnica de entrevista. Se desarrollará por etapas pequeñas con ASP.NET
 
 ## Estado
 
-Creación, consulta y edición de categorías completas; creación, validación, lista y detalle de productos implementados con SQLite. Suite actual: 57 casos BDD y 5 comprobaciones técnicas SQLite aprobadas. Edición de productos y eliminaciones siguen pendientes. Consulta `PROGRESS.md` para retomar el trabajo.
+Creación, consulta y edición de categorías completas; creación, validación, lista, detalle y edición de productos implementados con SQLite. Suite actual: 76 casos BDD y 5 comprobaciones técnicas SQLite aprobadas. Eliminaciones siguen pendientes. Consulta `PROGRESS.md` para retomar el trabajo.
 
 Consulta [PLAN.md](PLAN.md) para ver el paso a paso, las etapas completadas y cuál sigue.
 
@@ -36,6 +36,7 @@ Por cada comportamiento: escenario Gherkin en español, prueba HTTP que falla po
 - Los nombres de productos pueden repetirse. La descripción es opcional.
 - POST /api/products crea productos válidos con 201 y ubicación del detalle. GET de lista devuelve 200 (arreglo vacío si no hay productos); detalle 200 o 404 Problem Details. ProductResponse contiene id, name, description, categoryId y categoryName. El nombre de categoría se obtiene de la relación al consultar, por lo que muestra también los cambios posteriores de nombre.
 - Creación de productos: nombre ausente/null/vacío o solo blancos devuelve 400 con errors.Name: `El nombre es obligatorio.`. El nombre válido se guarda con Trim(), sin cambiar espacios internos. CategoryId ausente/null/cero/negativo devuelve 400 con errors.CategoryId: `La categoría es obligatoria.`; los identificadores de SQLite son enteros positivos. Un identificador positivo inexistente devuelve `La categoría indicada no existe.`. Se incluyen ambos errores cuando ambos campos faltan. Formato: application/problem+json. Los rechazos no guardan productos ni alteran categorías.
+- PUT /api/products/{id} comparte ProductRequest y validaciones con POST. Reemplaza nombre, descripción y categoría; conserva el identificador, recorta blancos externos y permite nombres repetidos. Omitir descripción la deja null. Devuelve 200 con el producto y su categoría actual. Comprueba primero existencia: producto inexistente devuelve 404 Problem Details incluso con cuerpo {}. Entradas inválidas devuelven 400 y conservan datos anteriores. Edición y cambio de categoría se comprobaron también al reiniciar, sin modificar otros productos ni categorías.
 - No se han establecido longitudes máximas adicionales.
 - No permitir eliminar categorías con productos; mensaje obligatorio: `Esta categoria no se puede eliminar porque tiene productos asignados`.
 - Respuestas: GET 200/404, POST 201, PUT 200/404, DELETE 204/404; validaciones 400 y conflictos 409. Los errores usarán un formato consistente.
@@ -80,4 +81,5 @@ dotnet tool run dotnet-ef migrations add InitialCategories --project src/Catalog
 
 ## Uso de IA
 
-Codex asistió en la planificación, estructura, escenarios BDD, bindings HTTP, endpoints, EF/SQLite, migraciones y validaciones. Los escenarios se ejecutaron antes de implementar: validaciones de productos fallaron por 201/500 y blancos conservados; después se corrigieron. La suite actual pasó con 62 pruebas (57 BDD y 5 técnicas SQLite), incluidas persistencia, rechazos sin cambios, SQL directo y actualización del esquema. La implementación se explica por etapas; la comprensión del candidato no se da por comprobada solo por haber entregado una explicación.
+Codex asistió en la planificación, estructura, escenarios BDD, bindings HTTP, endpoints, EF/SQLite, migraciones y validaciones. Los escenarios se ejecutaron antes de implementar: validaciones de productos fallaron por 201/500 y blancos conservados; después se corrigieron. La suite actual pasó con 81 pruebas (76 BDD y 5 técnicas SQLite), incluidas persistencia, rechazos sin cambios, SQL directo y actualización del esquema. La implementación se explica por etapas; la comprensión del candidato no se da por comprobada solo por haber entregado una explicación.
+

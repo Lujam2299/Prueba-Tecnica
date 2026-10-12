@@ -4,7 +4,7 @@ Referencia compartida para saber dónde estamos y qué sigue. Actualizaremos las
 
 ## Punto actual
 
-**Etapa 5 en curso: creación, consulta y validaciones de productos completas.** Suite de 62 pruebas aprobada (57 BDD y 5 técnicas). Lo siguiente es edición de productos, incluido cambio de categoría.
+**Etapa 5 completada: creación, consulta, validación y edición de productos, incluido cambio de categoría.** Suite de 81 pruebas aprobada (76 BDD y 5 técnicas). Lo siguiente es la etapa 6: eliminaciones y restricciones.
 
 ## Ciclo que repetiremos por comportamiento
 
@@ -70,8 +70,8 @@ Resultado esperado: creación, consulta y edición con escenarios aprobados y co
 - [x] Validar nombre requerido y quitar blancos externos del nombre de producto.
 - [x] Rechazar categoría ausente o inexistente con 400.
 - [x] Consultar lista y detalle mostrando identificador y nombre actual de categoría; cubrir detalle inexistente.
-- [ ] Editar producto, incluido cambio de categoría.
-- [ ] Verificar recursos inexistentes y validaciones en edición.
+- [x] Editar producto, incluido cambio de categoría.
+- [x] Verificar recursos inexistentes y validaciones en edición.
 
 Resultado esperado: creación, consulta y edición de productos verificadas mediante HTTP.
 
@@ -120,3 +120,4 @@ Resultado esperado: creación, consulta y edición de productos verificadas medi
 Estimación inicial: 14–19 horas de trabajo concentrado, repartidas en dos días. Revisaremos el tiempo real al cerrar cada etapa. Si el plazo peligra, recortaremos extras y comunicaremos pendientes sin omitir requisitos.
 
 Al retomar una sesión: leer AGENTS.md, README.md, PROGRESS.md y esta guía; revisar Git; continuar con la primera etapa pendiente. Marcar una casilla requiere evidencia, no solo haber intentado la acción.
+

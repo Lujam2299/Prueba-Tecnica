@@ -2,6 +2,14 @@
 
 ## Etapa actual
 
+Paso 5 completo: creación, consulta, validación y edición de productos con cambio de categoría. Fase roja en 3869433: 19 casos nuevos fallaron por HTTP 405, sin omisiones. Fase verde: dotnet test Catalogo.slnx --no-restore --logger "console;verbosity=minimal", código 0, 81 aprobadas (76 BDD y 5 técnicas), 0 omitidas.
+
+PUT busca el producto antes de validar, reutiliza validaciones de POST y captura específica de SQLite 787; guarda nombre recortado, descripción y CategoryId. Respuesta 200 conserva id e incluye nombre actual de categoría. Escenarios verifican cambios persistentes, descripción omitida null, duplicados permitidos, validaciones 400 e inexistentes 404, y conservación de datos tras rechazos. No cambió el esquema.
+
+Siguiente paso concreto: etapa 6, escenarios y endpoints de eliminación de productos y categorías, restricción 409 con mensaje exacto y comprobación directa de la restricción en SQLite. La carrera de desaparición de categoría entre validación y guardado sigue sin una prueba controlada.
+
+### Historial: validación de productos
+
 Validación de productos completada. Fase roja guardada en `8db4757`: 13 casos BDD fallidos y 1 comprobación directa FK aprobada, 0 omitidos. Nombres sin contenido se guardaban o provocaban 500, categoría ausente/inexistente provocaba 500 y blancos externos se conservaban. SQL directo ya rechazaba categoría inexistente con SQLite 787.
 
 Fase verde: `dotnet test Catalogo.slnx --no-restore --logger "console;verbosity=minimal"`, código 0, 62 pruebas aprobadas (57 BDD y 5 técnicas), 0 omitidas. Validación por campo en ProductEndpoints: IsNullOrWhiteSpace para nombre; CategoryId debe ser positivo y existir; se informan juntos ambos errores requeridos. ValidationProblem 400 consistente, Trim() al guardar y captura específica de SQLite 787 (la carrera entre comprobar y guardar no fue probada). Los escenarios verifican que rechazos no guarden productos ni alteren categorías, también tras reiniciar, y recorte persistente sin modificar blancos internos. No cambió el esquema. Base local sigue ausente; git diff --check sin errores.
@@ -100,4 +108,5 @@ Con autorización del usuario se subieron los cinco commits pendientes hasta `4e
 ### Edición de productos: fase roja
 
 19 casos nuevos ejecutados con filtro FullyQualifiedName~EdicionDeProductos: código 1, todos fallidos por HTTP 405, 0 omitidos. Cubren edición, cambio de categoría, descripción opcional, nombres repetidos, validaciones, inexistentes y conservación de datos al reiniciar. Implementación pendiente.
+
 
