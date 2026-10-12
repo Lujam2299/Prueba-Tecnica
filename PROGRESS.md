@@ -96,3 +96,8 @@ Seguir las tecnologías y el contrato HTTP de AGENTS.md. Supuestos y dudas para 
 Con autorización del usuario se creó el repositorio privado https://github.com/Lujam2299/Prueba-Tecnica y se configuró como `origin`. `git push -u origin main` terminó con código 0; se verificaron en GitHub la etiqueta Private y los cuatro archivos de preparación. Nombre elegido para la URL: Prueba-Tecnica; descripción: Prueba Técnica.
 
 Con autorización del usuario se subieron los cinco commits pendientes hasta `4e4935c` mediante `git push origin main` (código 0). `git ls-remote origin refs/heads/main` coincidió con `git rev-parse HEAD`; `git status --short --branch` mostró main sincronizada con origin/main y sin cambios. Incluye guía, estructura, punto de control, escenario rojo e implementación verde. Política acordada: commits pequeños y push al cerrar etapas o sesiones.
+
+### Edición de productos: fase roja
+
+19 casos nuevos ejecutados con filtro FullyQualifiedName~EdicionDeProductos: código 1, todos fallidos por HTTP 405, 0 omitidos. Cubren edición, cambio de categoría, descripción opcional, nombres repetidos, validaciones, inexistentes y conservación de datos al reiniciar. Implementación pendiente.
+
