@@ -2,6 +2,8 @@
 
 ## Etapa actual
 
+Bloque de nombre requerido en fase roja: 7 casos BDD nuevos compilados y ejecutados, 7 fallos y 0 omitidos. `dotnet test Catalogo.slnx --no-restore --filter "FullyQualifiedName~NombreRequeridoDeCategoria" --logger "console;verbosity=minimal"` terminó con código 1. Nombres ausentes/null devuelven 500; vacíos, espacios y blancos de control se guardan con 201; espacios externos no se recortan. Ejemplos de blancos usan escapes Unicode JSON para evitar que Gherkin interprete saltos de línea. Escenarios comprueban error estructurado 400, ausencia de filas y nombre recortado persistente tras reiniciar.
+
 Etapa 4 en curso: creación válida, descripción opcional, detalle, lista y conservación al reiniciar completados. Fase roja guardada en `14ff828`: 3 nuevos casos fallaron por POST 405 en lugar de 201; lista vacía pasó (total 4). Fase verde: `dotnet test Catalogo.slnx --no-restore --logger "console;verbosity=minimal"`, código 0, 4 casos aprobados, ninguno omitido.
 
 Se agregaron Category, CreateCategoryRequest, CatalogoDbContext y EF SQLite/Design 10.0.12. InitialCategories fue generada con `dotnet tool run dotnet-ef migrations add InitialCategories --project src/Catalogo.Api --output-dir Data/Migrations`, código 0, compilación correcta. `dotnet tool restore` comprobado. Program aplica migraciones al inicio; la conexión predeterminada apunta a src/Catalogo.Api/catalogo.db. ApiScenario usa ruta temporal única y Pooling=False; reinicia conservando el archivo y elimina solo sus archivos al finalizar. `Test-Path src/Catalogo.Api/catalogo.db` devolvió False después de la suite: las pruebas no crearon la base local de la aplicación.
