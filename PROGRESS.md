@@ -27,6 +27,8 @@ Verificaciones de etapa 2:
 
 ## Siguiente paso
 
+Punto de control solicitado por el usuario: etapa 2 terminada, commit de estructura `34319df`. Antes de avanzar a la etapa 3, revisar juntos lo realizado y aclarar conceptos o decisiones. No iniciar escenarios ni endpoints durante esta revisión. La etapa 3 sigue pendiente; no hay pruebas BDD ejecutadas. Los commits recientes de planificación y estructura están guardados localmente; no se ha comprobado una subida posterior al commit de publicación `40ec745`.
+
 Etapa 3: escribir el escenario de consulta de categorías vacías, configurar el arranque de la API para las pruebas y sus bindings HTTP. Comprobar el fallo por el endpoint pendiente antes de implementarlo y obtener la primera prueba BDD aprobada. Si una terminal abierta previamente no reconoce `dotnet`, abrir una nueva para cargar el PATH actualizado o usar la ruta completa.
 
 ## Pendientes
