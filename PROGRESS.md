@@ -2,6 +2,8 @@
 
 ## Etapa actual
 
+Edición en fase roja: 17 casos nuevos ejecutados y fallidos, 0 omitidos. `dotnet test Catalogo.slnx --no-restore --filter "FullyQualifiedName~EdicionDeCategorias" --logger "console;verbosity=minimal"`, código 1. PUT devuelve 405; GET inexistente ya devuelve 404 pero sin Problem Details. Escenarios cubren 6 ediciones válidas, 5 nombres inválidos, 3 conflictos Unicode con otra categoría, 2 PUT inexistentes (nombre válido e inválido) y GET inexistente. Verifican id conservado, datos persistentes después de reiniciar y ningún cambio tras rechazos.
+
 Unicidad de creación completada. Fase roja guardada en `bf70e9e`: ejecución filtrada `FullyQualifiedName~NombreUnico|FullyQualifiedName~SqliteCategoryIntegrityTests`, código 1, 11 fallos y 2 aprobadas. Duplicados recibían 201 en vez de 409; SQL directo y actualización desde InitialCategories no restringían duplicados.
 
 Fase verde: `dotnet test Catalogo.slnx --no-restore --logger "console;verbosity=minimal"`, código 0, 24 aprobadas y 0 omitidas: 20 BDD y 4 técnicas. Casos incluyen mayúsculas, Ñ, ó compuesta/descompuesta, espacios externos, conservación de la original al reiniciar, acento distinto de ausencia de acento, espacios internos significativos, restricción mediante SQL directo y migración desde el esquema anterior.
