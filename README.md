@@ -6,6 +6,8 @@ Prueba técnica de entrevista. Se desarrollará por etapas pequeñas con ASP.NET
 
 Preparación del entorno. La API y las pruebas todavía no están creadas. Consulta `PROGRESS.md` para retomar el trabajo.
 
+Consulta [PLAN.md](PLAN.md) para ver el paso a paso, las etapas completadas y cuál sigue.
+
 ## Requisitos
 
 - SDK de .NET 10 (permite compilar y ejecutar pruebas).

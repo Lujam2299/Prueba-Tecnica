@@ -4,6 +4,8 @@
 
 Preparación del entorno (11 de octubre de 2026). Se leyeron AGENTS.md y el chat de planificación completo. Acordado trabajar por etapas y completar el alcance principal en un máximo de dos días.
 
+Preparación completada. Se creó PLAN.md como referencia compartida con etapas y casillas de seguimiento; README incluye su enlace. Esta intervención solo agrega planificación: no crea proyectos ni implementa comportamientos.
+
 ## Verificaciones reales
 
 - La carpeta inicialmente solo contenía AGENTS.md.
