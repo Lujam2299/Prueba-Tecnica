@@ -4,7 +4,7 @@ Referencia compartida para saber dónde estamos y qué sigue. Actualizaremos las
 
 ## Punto actual
 
-**Etapa 5 completada: creación, consulta, validación y edición de productos, incluido cambio de categoría.** Suite de 81 pruebas aprobada (76 BDD y 5 técnicas). Lo siguiente es la etapa 6: eliminaciones y restricciones.
+**Etapa 5 completada: creación, consulta, validación y edición de productos, incluido cambio de categoría.** Etapa 6 en curso: eliminación de productos completa. Suite de 84 pruebas aprobada (79 BDD y 5 técnicas). Sigue eliminación de categorías y restricción con productos.
 
 ## Ciclo que repetiremos por comportamiento
 
@@ -79,7 +79,7 @@ Resultado esperado: creación, consulta y edición de productos verificadas medi
 
 ### 6. Completar eliminaciones
 
-- [ ] Eliminar productos con 204; recurso inexistente con 404.
+- [x] Eliminar productos con 204; recurso inexistente con 404.
 - [ ] Eliminar categorías sin productos con 204.
 - [ ] Rechazar categorías con productos con 409 y el mensaje exacto: `Esta categoria no se puede eliminar porque tiene productos asignados`.
 - [ ] Comprobar que el rechazo conserva categoría y productos.

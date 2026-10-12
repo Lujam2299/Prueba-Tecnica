@@ -60,6 +60,17 @@ public static class ProductEndpoints
             var response = await Responses(db.Products.Where(saved => saved.Id == id)).SingleAsync();
             return Results.Ok(response);
         });
+
+        app.MapDelete("/api/products/{id:int}", async (int id, CatalogoDbContext db) =>
+        {
+            var product = await db.Products.FindAsync(id);
+            if (product is null)
+                return ProductNotFound();
+
+            db.Products.Remove(product);
+            await db.SaveChangesAsync();
+            return Results.NoContent();
+        });
     }
 
     private static IResult ProductNotFound() =>

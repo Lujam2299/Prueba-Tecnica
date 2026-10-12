@@ -2,6 +2,14 @@
 
 ## Etapa actual
 
+Etapa 6 en curso: eliminación de productos completada. Fase roja en f2cb059: dotnet test Catalogo.slnx --no-restore --filter "FullyQualifiedName~EliminacionDeProductos" --logger "console;verbosity=minimal", código 1, 3 fallos por HTTP 405, 0 omitidas. Fase verde: dotnet test Catalogo.slnx --no-restore --logger "console;verbosity=minimal", código 0, 84 aprobadas (79 BDD y 5 técnicas), 0 omitidas.
+
+DELETE busca mediante FindAsync, devuelve Problem Details 404 si no existe, marca la entidad con Remove y persiste con SaveChangesAsync; responde 204 sin cuerpo. Escenarios verifican desaparición persistente tras reinicio, conservación de categoría y otro producto, inexistentes y segunda eliminación 404. No cambió el esquema. git diff --check sin errores; Test-Path src/Catalogo.Api/catalogo.db: False.
+
+Siguiente paso: eliminación de categorías sin productos, rechazo 409 con mensaje exacto cuando tienen productos, conservación tras rechazo, eliminación tras retirar todos sus productos y prueba directa de restricción SQLite.
+
+### Historial: cierre del paso 5
+
 Paso 5 completo: creación, consulta, validación y edición de productos con cambio de categoría. Fase roja en 3869433: 19 casos nuevos fallaron por HTTP 405, sin omisiones. Fase verde: dotnet test Catalogo.slnx --no-restore --logger "console;verbosity=minimal", código 0, 81 aprobadas (76 BDD y 5 técnicas), 0 omitidas.
 
 PUT busca el producto antes de validar, reutiliza validaciones de POST y captura específica de SQLite 787; guarda nombre recortado, descripción y CategoryId. Respuesta 200 conserva id e incluye nombre actual de categoría. Escenarios verifican cambios persistentes, descripción omitida null, duplicados permitidos, validaciones 400 e inexistentes 404, y conservación de datos tras rechazos. No cambió el esquema.
