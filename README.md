@@ -4,7 +4,7 @@ Prueba técnica de entrevista. Se desarrollará por etapas pequeñas con ASP.NET
 
 ## Estado
 
-Creación, consulta y edición de categorías completas; creación, validación, lista, detalle y edición de productos implementados con SQLite. Suite actual: 79 casos BDD y 5 comprobaciones técnicas SQLite aprobadas. Eliminación de productos completa; eliminación de categorías pendiente. Consulta `PROGRESS.md` para retomar el trabajo.
+Creación, consulta y edición de categorías completas; creación, validación, lista, detalle y edición de productos implementados con SQLite. Suite actual: 84 casos BDD y 6 comprobaciones técnicas SQLite aprobadas. Eliminaciones de productos y categorías completas, incluida la restricción con productos. Pendiente revisión final de cobertura, documentación de demostración y reproducibilidad. Consulta `PROGRESS.md` para retomar el trabajo.
 
 Consulta [PLAN.md](PLAN.md) para ver el paso a paso, las etapas completadas y cuál sigue.
 
@@ -39,7 +39,7 @@ Por cada comportamiento: escenario Gherkin en español, prueba HTTP que falla po
 - PUT /api/products/{id} comparte ProductRequest y validaciones con POST. Reemplaza nombre, descripción y categoría; conserva el identificador, recorta blancos externos y permite nombres repetidos. Omitir descripción la deja null. Devuelve 200 con el producto y su categoría actual. Comprueba primero existencia: producto inexistente devuelve 404 Problem Details incluso con cuerpo {}. Entradas inválidas devuelven 400 y conservan datos anteriores. Edición y cambio de categoría se comprobaron también al reiniciar, sin modificar otros productos ni categorías.
 - DELETE /api/products/{id} elimina el producto con 204 y cuerpo vacío; inexistente o ya eliminado devuelve 404 Problem Details. La eliminación persiste tras reiniciar y conserva categoría y otros productos. No requiere cambios de esquema.
 - No se han establecido longitudes máximas adicionales.
-- No permitir eliminar categorías con productos; mensaje obligatorio: `Esta categoria no se puede eliminar porque tiene productos asignados`.
+- DELETE /api/categories/{id}: categoría sin productos devuelve 204 sin cuerpo; inexistente o ya eliminada devuelve 404 Problem Details. Con productos devuelve 409 y detail exacto: `Esta categoria no se puede eliminar porque tiene productos asignados`. El rechazo conserva categoría y productos incluso al reiniciar. Retirar todos los productos permite eliminar la categoría; retirar solo uno no basta.
 - Respuestas: GET 200/404, POST 201, PUT 200/404, DELETE 204/404; validaciones 400 y conflictos 409. Los errores usarán un formato consistente.
 - Entrega: repositorio, README y video. Deploy opcional después de completar los requisitos principales.
 
@@ -66,7 +66,7 @@ EF Core SQLite y Design están fijados en 10.0.12; `dotnet-tools.json` fija la h
 
 La migración UniqueCategoryNames configura la comparación y el índice único. Se comprobó actualizar desde InitialCategories conservando una categoría con acento. Si una base anterior contiene nombres equivalentes duplicados, la creación del índice falla; no se eliminan registros automáticamente. Habría que resolver esos datos antes de aplicar la restricción.
 
-AddProducts crea Products y la clave foránea CategoryId → Categories.Id con eliminación restringida. El nombre de producto es no nulo en la tabla y no tiene índice único. Se verificaron creación, validaciones, consultas, descripción opcional, repetición de nombres y persistencia. SQL directo confirmó que la clave foránea rechaza un producto con categoría inexistente (SQLite 787); el endpoint también captura esa infracción si la categoría desaparece entre la validación y el guardado, aunque no se ha probado esa carrera controlada. La prueba directa de restricción de eliminación sigue pendiente. Cada prueba usa su propio archivo temporal.
+AddProducts crea Products y la clave foránea CategoryId → Categories.Id con eliminación restringida. El nombre de producto es no nulo en la tabla y no tiene índice único. Se verificaron creación, validaciones, consultas, descripción opcional, repetición de nombres y persistencia. SQL directo confirmó que la clave foránea rechaza un producto con categoría inexistente (SQLite 787); el endpoint también captura esa infracción si la categoría desaparece entre la validación y el guardado, aunque no se ha probado esa carrera controlada. SQL directo también confirmó que eliminar una categoría con productos falla con SQLite 1811 (RESTRICT) y conserva los datos tras reiniciar. DELETE captura específicamente SQLite 787/1811 ante una relación que impida el guardado; la carrera entre la comprobación y el guardado no se ha probado de forma controlada. Cada prueba usa su propio archivo temporal.
 
 `CatalogoDbContext` registra `CATEGORY_NAME` en cada conexión SQLite que administra, incluidas las de migraciones. Una herramienta externa que compare o escriba Name debe registrar la misma comparación; SQLite no incorpora esta función por sí solo. Cambiar su algoritmo en el futuro requiere revisar/reconstruir el índice existente, no solo cambiar código.
 
@@ -82,4 +82,4 @@ dotnet tool run dotnet-ef migrations add InitialCategories --project src/Catalog
 
 ## Uso de IA
 
-Codex asistió en la planificación, estructura, escenarios BDD, bindings HTTP, endpoints, EF/SQLite, migraciones y validaciones. Los escenarios se ejecutaron antes de implementar: validaciones de productos fallaron por 201/500 y blancos conservados; después se corrigieron. La suite actual pasó con 84 pruebas (79 BDD y 5 técnicas SQLite), incluidas persistencia, rechazos sin cambios, SQL directo y actualización del esquema. La implementación se explica por etapas; la comprensión del candidato no se da por comprobada solo por haber entregado una explicación.
+Codex asistió en la planificación, estructura, escenarios BDD, bindings HTTP, endpoints, EF/SQLite, migraciones y validaciones. Los escenarios se ejecutaron antes de implementar: validaciones de productos fallaron por 201/500 y blancos conservados; después se corrigieron. La suite actual pasó con 90 pruebas (84 BDD y 6 técnicas SQLite), incluidas persistencia, rechazos sin cambios, SQL directo y actualización del esquema. La implementación se explica por etapas; la comprensión del candidato no se da por comprobada solo por haber entregado una explicación.

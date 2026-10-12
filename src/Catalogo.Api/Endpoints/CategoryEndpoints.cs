@@ -63,7 +63,36 @@ public static class CategoryEndpoints
 
             return Results.Ok(new CategoryResponse(category.Id, category.Name, category.Description));
         });
+
+        app.MapDelete("/api/categories/{id:int}", async (int id, CatalogoDbContext db) =>
+        {
+            var category = await db.Categories.FindAsync(id);
+            if (category is null)
+                return CategoryNotFound();
+
+            if (await db.Products.AnyAsync(product => product.CategoryId == id))
+                return CategoryHasProducts();
+
+            db.Categories.Remove(category);
+            try
+            {
+                await db.SaveChangesAsync();
+            }
+            catch (DbUpdateException exception) when
+                (exception.InnerException is SqliteException
+                    { SqliteExtendedErrorCode: 787 or 1811 })
+            {
+                // RESTRICT también protege si se asigna un producto antes de guardar.
+                return CategoryHasProducts();
+            }
+            return Results.NoContent();
+        });
     }
+
+    private static IResult CategoryHasProducts() => Results.Problem(
+        statusCode: StatusCodes.Status409Conflict,
+        title: "Categoría con productos asignados.",
+        detail: "Esta categoria no se puede eliminar porque tiene productos asignados");
 
     private static IResult NameRequired() => Results.ValidationProblem(
         new Dictionary<string, string[]> { ["Name"] = ["El nombre es obligatorio."] },

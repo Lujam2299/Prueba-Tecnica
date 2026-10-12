@@ -2,6 +2,16 @@
 
 ## Etapa actual
 
+Etapa 6 completa: eliminaciones de productos y categorías con restricción de productos asignados. Fase roja en 1378774: dotnet test Catalogo.slnx --no-restore --filter "FullyQualifiedName~EliminacionDeCategorias|FullyQualifiedName~DatabaseRejectsDeletingCategoryWithProducts" --logger "console;verbosity=minimal", código 1, 5 casos HTTP fallidos por 405 y 1 prueba SQL aprobada, 0 omitidos.
+
+Fase verde: dotnet test Catalogo.slnx --no-restore --logger "console;verbosity=minimal", código 0, 90 aprobadas (84 BDD y 6 técnicas), 0 omitidas. DELETE de categorías devuelve 204/404 y consulta productos antes de eliminar; conflicto 409 con detail exacto requerido. SQLite RESTRICT ya configurado se comprobó por SQL directo (1811), conservando ambos recursos tras reiniciar. Endpoint captura SQLite 787/1811 al guardar. No cambió el esquema ni se generaron migraciones.
+
+Escenarios: eliminar categoría vacía, inexistente, segunda eliminación, rechazo con dos productos, rechazo tras retirar uno y eliminación después de retirar todos. Comprueban listas y detalles persistentes, conservación de otra categoría y productos restantes. git diff --check sin errores; Test-Path src/Catalogo.Api/catalogo.db: False. Limitación: no se ha provocado una carrera HTTP controlada entre comprobar productos y guardar.
+
+Siguiente paso: etapa 7, auditoría de escenarios contra AGENTS.md, integridad, errores y aislamiento; después OpenAPI, ejecución de peticiones y comprobación desde directorio limpio (etapa 8).
+
+### Historial: eliminación de productos
+
 Etapa 6 en curso: eliminación de productos completada. Fase roja en f2cb059: dotnet test Catalogo.slnx --no-restore --filter "FullyQualifiedName~EliminacionDeProductos" --logger "console;verbosity=minimal", código 1, 3 fallos por HTTP 405, 0 omitidas. Fase verde: dotnet test Catalogo.slnx --no-restore --logger "console;verbosity=minimal", código 0, 84 aprobadas (79 BDD y 5 técnicas), 0 omitidas.
 
 DELETE busca mediante FindAsync, devuelve Problem Details 404 si no existe, marca la entidad con Remove y persiste con SaveChangesAsync; responde 204 sin cuerpo. Escenarios verifican desaparición persistente tras reinicio, conservación de categoría y otro producto, inexistentes y segunda eliminación 404. No cambió el esquema. git diff --check sin errores; Test-Path src/Catalogo.Api/catalogo.db: False.
