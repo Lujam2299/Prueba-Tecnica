@@ -4,7 +4,14 @@
 
 Preparación del entorno (11 de octubre de 2026). Se leyeron AGENTS.md y el chat de planificación completo. Acordado trabajar por etapas y completar el alcance principal en un máximo de dos días.
 
-Preparación completada. Se creó PLAN.md como referencia compartida con etapas y casillas de seguimiento; README incluye su enlace. Esta intervención solo agrega planificación: no crea proyectos ni implementa comportamientos.
+Etapas 1 y 2 completadas. PLAN.md contiene las casillas de seguimiento. Se crearon Catalogo.slnx, global.json y los dos proyectos para net10.0. Program.cs solo compone y arranca la aplicación; no tiene endpoints. El proyecto de pruebas referencia la API y contiene los paquetes de Reqnroll y NUnit, sin escenarios todavía.
+
+Verificaciones de etapa 2:
+
+- Consulta de versiones estables en NuGet: Reqnroll.NUnit 3.3.4, NUnit 4.6.1 (rama 4), NUnit3TestAdapter 6.3.1 y Microsoft.NET.Test.Sdk 18.10.1, fijadas en el proyecto.
+- `dotnet restore Catalogo.slnx`: código 0; ambos proyectos restaurados.
+- `dotnet build Catalogo.slnx --no-restore`: fuera del sandbox, código 0, cero advertencias y errores. Dentro del sandbox terminó con código 1 sin diagnóstico útil.
+- No se ejecutaron pruebas: todavía no hay escenarios. La compilación no demuestra comportamientos ni integración completa de Reqnroll.
 
 ## Verificaciones reales
 
@@ -20,7 +27,7 @@ Preparación completada. Se creó PLAN.md como referencia compartida con etapas 
 
 ## Siguiente paso
 
-Crear la solución con los dos proyectos. Resolver primero la integración de Reqnroll mediante un escenario HTTP ejecutable, antes de implementar categorías. Si una terminal abierta previamente no reconoce `dotnet`, abrir una nueva para cargar el PATH actualizado o usar la ruta completa.
+Etapa 3: escribir el escenario de consulta de categorías vacías, configurar el arranque de la API para las pruebas y sus bindings HTTP. Comprobar el fallo por el endpoint pendiente antes de implementarlo y obtener la primera prueba BDD aprobada. Si una terminal abierta previamente no reconoce `dotnet`, abrir una nueva para cargar el PATH actualizado o usar la ruta completa.
 
 ## Pendientes
 

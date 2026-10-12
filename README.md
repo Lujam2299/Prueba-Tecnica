@@ -4,7 +4,7 @@ Prueba técnica de entrevista. Se desarrollará por etapas pequeñas con ASP.NET
 
 ## Estado
 
-Preparación del entorno. La API y las pruebas todavía no están creadas. Consulta `PROGRESS.md` para retomar el trabajo.
+Solución creada y compilación verificada. La API aún no tiene endpoints y el proyecto de pruebas aún no contiene escenarios. Consulta `PROGRESS.md` para retomar el trabajo.
 
 Consulta [PLAN.md](PLAN.md) para ver el paso a paso, las etapas completadas y cuál sigue.
 
@@ -39,8 +39,19 @@ Pendiente confirmar con el contacto: interfaz de documentación suficiente para 
 
 ## Ejecución y pruebas
 
-Los comandos de creación, configuración, migraciones, ejecución y pruebas se incorporarán cuando se comprueben. Aún no hay funcionalidades ni pruebas ejecutables.
+Desde la raíz del repositorio:
+
+```powershell
+dotnet restore Catalogo.slnx
+dotnet build Catalogo.slnx --no-restore
+```
+
+`Catalogo.slnx` agrupa la API y las pruebas. `global.json` selecciona el SDK 10.0.401 y permite parches posteriores de esa misma banda. Los paquetes del proyecto de pruebas tienen versiones explícitas: Reqnroll.NUnit 3.3.4, NUnit 4.6.1, NUnit3TestAdapter 6.3.1 y Microsoft.NET.Test.Sdk 18.10.1. Los archivos generados de Reqnroll se ubicarán en `obj/` para excluirlos de Git.
+
+Si una terminal anterior a la instalación no reconoce `dotnet`, abre otra o usa `& 'C:\Program Files\dotnet\dotnet.exe'` en lugar de `dotnet`.
+
+Los comandos de migraciones, ejecución y pruebas se incorporarán al comprobarlos. Aún no hay funcionalidades ni escenarios ejecutables; EF Core y SQLite se agregarán cuando el comportamiento requiera persistencia.
 
 ## Uso de IA
 
-Codex asistió en la planificación, lectura de requisitos y revisión del entorno. La implementación se revisará y explicará por etapas para que el candidato pueda comprenderla y modificarla. No se han ejecutado pruebas de la API todavía.
+Codex asistió en la planificación, lectura de requisitos, revisión del entorno y creación de la estructura de proyectos. Se verificaron la restauración y compilación. La implementación se revisará y explicará por etapas para que el candidato pueda comprenderla y modificarla. No se han ejecutado pruebas de la API todavía.

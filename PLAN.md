@@ -4,7 +4,7 @@ Referencia compartida para saber dónde estamos y qué sigue. Actualizaremos las
 
 ## Punto actual
 
-**Etapa 1 completada. Lo siguiente es la etapa 2: crear la solución y los dos proyectos.** Todavía no hay API ni pruebas implementadas.
+**Etapas 1 y 2 completadas. Lo siguiente es la etapa 3: ejecutar el primer escenario BDD.** La API puede compilarse, pero aún no tiene endpoints ni escenarios escritos.
 
 ## Ciclo que repetiremos por comportamiento
 
@@ -29,14 +29,14 @@ No escribiremos toda la API de una sola vez. Al cerrar cada bloque revisaremos q
 
 Resultado comprobado: SDK 10.0.401 instalado y repositorio privado `Lujam2299/Prueba-Tecnica` disponible.
 
-### 2. Crear la solución — siguiente etapa
+### 2. Crear la solución — completado
 
-- [ ] Crear una solución que agrupe los dos proyectos.
-- [ ] Crear `src/Catalogo.Api` con Minimal APIs para `net10.0`.
-- [ ] Crear `tests/Catalogo.AcceptanceTests` para Reqnroll y NUnit.
-- [ ] Fijar versiones compatibles de los paquetes y del SDK.
-- [ ] Comprobar restauración de dependencias y compilación.
-- [ ] Documentar comandos comprobados y guardar el avance.
+- [x] Crear una solución que agrupe los dos proyectos.
+- [x] Crear `src/Catalogo.Api` con Minimal APIs para `net10.0`.
+- [x] Crear `tests/Catalogo.AcceptanceTests` para Reqnroll y NUnit.
+- [x] Fijar versiones compatibles de los paquetes y del SDK.
+- [x] Comprobar restauración de dependencias y compilación.
+- [x] Documentar comandos comprobados y guardar el avance.
 
 Conceptos a explicar: una solución agrupa proyectos; la API recibe peticiones HTTP; el proyecto de pruebas verifica su comportamiento.
 
