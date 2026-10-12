@@ -4,7 +4,7 @@ Prueba técnica de entrevista. Se desarrollará por etapas pequeñas con ASP.NET
 
 ## Estado
 
-Primer comportamiento implementado y verificado con BDD: `GET /api/categories` devuelve 200 y `[]`. Todavía no hay creación ni persistencia de datos. Consulta `PROGRESS.md` para retomar el trabajo.
+Creación válida de categorías con persistencia SQLite implementada. POST devuelve 201 y la ubicación del detalle; lista y detalle leen la base. Cuatro casos BDD aprobados, incluido reinicio de la aplicación. Validaciones de nombres, duplicados, edición y eliminaciones siguen pendientes. Consulta `PROGRESS.md` para retomar el trabajo.
 
 Consulta [PLAN.md](PLAN.md) para ver el paso a paso, las etapas completadas y cuál sigue.
 
@@ -43,6 +43,7 @@ Desde la raíz del repositorio:
 
 ```powershell
 dotnet restore Catalogo.slnx
+dotnet tool restore
 dotnet build Catalogo.slnx --no-restore
 dotnet test Catalogo.slnx --no-restore
 ```
@@ -51,10 +52,20 @@ dotnet test Catalogo.slnx --no-restore
 
 Si una terminal anterior a la instalación no reconoce `dotnet`, abre otra o usa `& 'C:\Program Files\dotnet\dotnet.exe'` en lugar de `dotnet`.
 
-Las pruebas usan Microsoft.AspNetCore.Mvc.Testing 10.0.12 y WebApplicationFactory: levantan la API en un servidor de pruebas en memoria y realizan peticiones HTTP con HttpClient. Cada escenario tiene su propia aplicación, que se cierra al finalizar; no hace falta arrancar la API manualmente. La prueba actual verifica código 200, tipo JSON y arreglo vacío. EF Core, migraciones y bases aisladas se agregarán con la creación de categorías.
+Las pruebas usan Microsoft.AspNetCore.Mvc.Testing 10.0.12 y WebApplicationFactory: levantan la API en un servidor de pruebas en memoria y realizan peticiones HTTP con HttpClient. Cada escenario utiliza su propio archivo SQLite temporal, sin conexión compartida; lo elimina al finalizar. El reinicio cierra la aplicación y abre otra conservando el mismo archivo dentro del escenario. No hace falta arrancar la API manualmente.
 
-Los comandos de migraciones y ejecución manual se incorporarán al comprobarlos.
+EF Core SQLite y Design están fijados en 10.0.12; `dotnet-tools.json` fija la herramienta local dotnet-ef en esa misma versión. `CatalogoDbContext` define el modelo de almacenamiento. La migración InitialCategories, incluida en Git, crea la tabla; `Program.cs` aplica migraciones pendientes al arrancar. Esta elección simplifica una demostración local; no es una estrategia de despliegue multiinstancia.
+
+La conexión predeterminada guarda `catalogo.db` en la raíz del proyecto de la API. Puede reemplazarse con `ConnectionStrings__Catalogo`; las pruebas la reemplazan antes del arranque. Los archivos de base quedan excluidos de Git.
+
+Comando comprobado para generar la primera migración (ya existe; no repetirlo):
+
+```powershell
+dotnet tool run dotnet-ef migrations add InitialCategories --project src/Catalogo.Api --output-dir Data/Migrations
+```
+
+`CatalogoDbContextFactory` permite a la herramienta generar el esquema sin arrancar la API. Su ruta relativa es solo una configuración de diseño; para aplicar manualmente una migración a un archivo específico habría que indicar su conexión. Las pruebas verificaron la aplicación automática de la migración. La ejecución manual de la API y sus ejemplos se comprobarán en una etapa posterior.
 
 ## Uso de IA
 
-Codex asistió en la planificación, revisión del entorno, estructura y primer escenario BDD con sus bindings y endpoint. Se verificaron restauración y compilación; la prueba HTTP falló primero por 404 y pasó después con 200 y arreglo JSON vacío. La implementación se explica por etapas para que el candidato pueda comprenderla y modificarla; su comprensión no se da por comprobada solo por haber entregado una explicación.
+Codex asistió en la planificación, estructura, escenarios BDD, bindings HTTP, endpoints, configuración EF/SQLite y generación de la migración. La lista vacía falló primero por 404 y luego pasó. Los casos de creación fallaron primero por 405 en lugar de 201; después pasaron los cuatro casos, incluido reinicio con datos conservados. La implementación se explica por etapas; la comprensión del candidato no se da por comprobada solo por haber entregado una explicación.

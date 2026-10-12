@@ -2,7 +2,11 @@
 
 ## Etapa actual
 
-Etapa 4 en curso: escenarios de creación válida con y sin descripción, detalle, lista y conservación al reiniciar escritos antes de implementar. Fase roja: `dotnet test Catalogo.slnx --no-restore --logger "console;verbosity=minimal"`, código 1, 3 nuevos casos fallan por POST 405 en lugar de 201; el escenario de lista vacía pasa (total 4). ApiScenario asigna una ruta temporal única por escenario y reinicia conservando esa ruta; limpieza de sus archivos al finalizar.
+Etapa 4 en curso: creación válida, descripción opcional, detalle, lista y conservación al reiniciar completados. Fase roja guardada en `14ff828`: 3 nuevos casos fallaron por POST 405 en lugar de 201; lista vacía pasó (total 4). Fase verde: `dotnet test Catalogo.slnx --no-restore --logger "console;verbosity=minimal"`, código 0, 4 casos aprobados, ninguno omitido.
+
+Se agregaron Category, CreateCategoryRequest, CatalogoDbContext y EF SQLite/Design 10.0.12. InitialCategories fue generada con `dotnet tool run dotnet-ef migrations add InitialCategories --project src/Catalogo.Api --output-dir Data/Migrations`, código 0, compilación correcta. `dotnet tool restore` comprobado. Program aplica migraciones al inicio; la conexión predeterminada apunta a src/Catalogo.Api/catalogo.db. ApiScenario usa ruta temporal única y Pooling=False; reinicia conservando el archivo y elimina solo sus archivos al finalizar. `Test-Path src/Catalogo.Api/catalogo.db` devolvió False después de la suite: las pruebas no crearon la base local de la aplicación.
+
+Limitaciones actuales: solo creación válida; nombres vacíos, espacios y duplicados todavía no están validados. El detalle devuelve 404 para inexistentes, pero ese caso aún no tiene escenario BDD. No hay edición, eliminación ni productos.
 
 Primer escenario de etapa 3 completado. Fase roja: `dotnet test Catalogo.slnx --logger "console;verbosity=normal"` compiló y descubrió 1 escenario; código 1 porque esperaba 200 y recibió 404 al consultar /api/categories. Guardado antes del endpoint en commit `37ff772`.
 
@@ -35,11 +39,11 @@ Verificaciones de etapa 2:
 
 ## Siguiente paso
 
-Primer ciclo BDD explicado al usuario. Después: escenario de creación de categoría, persistencia EF Core/SQLite con migración e aislamiento de bases, antes de implementar el comportamiento. Usuario con experiencia web, nuevo en C#/.NET; seguir explicando por etapas.
+Explicar creación y persistencia. Después escribir escenarios de nombres requeridos y espacios; comprobar fallos antes de validar. Luego unicidad Unicode también en la base con escenarios de acentos y mayúsculas. Usuario con experiencia web, nuevo en C#/.NET; seguir explicando por etapas.
 
 ## Pendientes
 
-Todas las funcionalidades, escenarios BDD, migraciones, comprobación de persistencia, documentación ejecutable y guion del video.
+Validaciones y unicidad de categorías, detalle inexistente, edición, eliminaciones, productos y su relación; cobertura de integridad, ejecución limpia, documentación de demostración y guion del video. Creación válida, migración inicial y reinicio persistente ya comprobados.
 
 ## Decisiones y dudas
 

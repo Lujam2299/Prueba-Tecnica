@@ -4,7 +4,7 @@ Referencia compartida para saber dónde estamos y qué sigue. Actualizaremos las
 
 ## Punto actual
 
-**Primer escenario BDD ejecutado y aprobado (etapa 3). Lo siguiente es la etapa 4: creación y persistencia de categorías.** La API devuelve una lista vacía; aún no almacena datos. El aislamiento de bases se completará al agregar SQLite.
+**Etapa 4 en curso: creación válida y persistencia completas.** Cuatro casos BDD aprobados. Lo siguiente son escenarios de nombres requeridos, espacios y unicidad, antes de implementar sus validaciones.
 
 ## Ciclo que repetiremos por comportamiento
 
@@ -43,7 +43,7 @@ Conceptos a explicar: una solución agrupa proyectos; la API recibe peticiones H
 ### 3. Ejecutar el primer escenario BDD
 
 - [x] Configurar Reqnroll, NUnit y el arranque de la API desde las pruebas.
-- [ ] Preparar aislamiento de datos para cada escenario (aplicación aislada lista; bases pendientes al agregar SQLite).
+- [x] Preparar aislamiento de datos para cada escenario (archivo SQLite temporal único, eliminado al finalizar).
 - [x] Escribir primero: «Consultar categorías cuando no hay ninguna devuelve una lista vacía».
 - [x] Crear sus bindings HTTP y comprobar el fallo por el endpoint pendiente.
 - [x] Implementar ese comportamiento con respuesta 200 y lista vacía.
@@ -53,11 +53,12 @@ Resultado esperado: una prueba de aceptación real ejecutable. Este bloque resue
 
 ### 4. Desarrollar categorías por comportamientos
 
-- [ ] Configurar EF Core 10, SQLite en archivo y migraciones conforme los escenarios requieran persistencia.
-- [ ] Crear categoría: nombre requerido, descripción opcional, respuesta 201 y ubicación del detalle.
+- [x] Configurar EF Core 10, SQLite en archivo y migraciones conforme los escenarios requieran persistencia.
+- [x] Crear categoría válida: descripción opcional, respuesta 201 y ubicación del detalle.
 - [ ] Validar nombres vacíos y espacios; quitar espacios externos.
 - [ ] Definir, documentar y probar la estrategia Unicode de unicidad también en la base: mayúsculas ignoradas, acentos conservados, ejemplo «Electrónica».
-- [ ] Consultar lista y detalle; recurso inexistente devuelve 404.
+- [x] Consultar lista y detalle de categorías creadas.
+- [ ] Cubrir por BDD el detalle inexistente con 404.
 - [ ] Editar categoría y validar conflictos con otras; conservar su propio nombre es válido.
 
 Resultado esperado: creación, consulta y edición con escenarios aprobados y contratos de entrada/salida, sin devolver entidades EF directamente.
@@ -88,7 +89,7 @@ Resultado esperado: creación, consulta y edición de productos verificadas medi
 
 - [ ] Revisar todos los escenarios obligatorios contra AGENTS.md.
 - [ ] Mantener errores estructurados y consistentes, preferentemente Problem Details.
-- [ ] Comprobar persistencia después de reiniciar la aplicación.
+- [x] Comprobar persistencia después de reiniciar la aplicación.
 - [ ] Comprobar unicidad y relación protegidas por la base.
 - [ ] Comprobar que las pruebas no usan la base local de la API ni dependen del orden.
 - [ ] Ejecutar la suite completa y registrar resultados reales.
