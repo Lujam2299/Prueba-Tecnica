@@ -2,6 +2,8 @@
 
 ## Etapa actual
 
+Unicidad en fase roja: 9 casos HTTP y 4 comprobaciones técnicas SQLite (13 pruebas nuevas). Ejecución filtrada `FullyQualifiedName~NombreUnico|FullyQualifiedName~SqliteCategoryIntegrityTests`: código 1, 11 fallos y 2 aprobadas. Duplicados reciben 201 en vez de 409; SQL directo y actualización desde InitialCategories no restringen duplicados. Nombres sin acento y diferencias de espacios internos ya se permiten. Casos incluyen mayúsculas, Ñ, ó compuesta/descompuesta y espacios externos.
+
 Nombre requerido y espacios completados. Fase roja guardada en `c4b15fe`: 7 nuevos casos ejecutados, 7 fallos y 0 omitidos; nombres ausentes/null devolvían 500, blancos se guardaban y espacios externos se conservaban. Ejemplos de blancos usan escapes Unicode JSON para evitar que Gherkin interprete saltos de línea.
 
 Fase verde: `dotnet test Catalogo.slnx --no-restore --logger "console;verbosity=minimal"`, código 0, 11 casos aprobados y 0 omitidos. `string.IsNullOrWhiteSpace` rechaza nombre ausente, null, vacío, espacios, tabulaciones y saltos; `Results.ValidationProblem` devuelve 400, application/problem+json y errors.Name con "El nombre es obligatorio.". `Trim()` elimina blancos externos y conserva los internos; los escenarios comprueban ausencia de filas tras rechazo y nombre persistente al reiniciar. Contrato de entrada nullable para validar explícitamente; entidad sigue con Name requerido. No cambió el esquema ni se generó migración.

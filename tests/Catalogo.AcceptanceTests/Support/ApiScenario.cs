@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.DependencyInjection;
 using Reqnroll;
 
 namespace Catalogo.AcceptanceTests.Support;
@@ -12,6 +13,8 @@ public sealed class ApiScenario
 
     public HttpClient Client { get; private set; } = null!;
     public HttpResponseMessage? Response { get; set; }
+
+    public IServiceScope CreateScope() => factory!.Services.CreateScope();
 
     public void Start()
     {
