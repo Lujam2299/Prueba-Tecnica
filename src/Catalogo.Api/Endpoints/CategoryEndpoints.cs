@@ -2,6 +2,7 @@ using Catalogo.Api.Contracts;
 using Catalogo.Api.Data;
 using Catalogo.Api.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Data.Sqlite;
 
 namespace Catalogo.Api.Endpoints;
 
@@ -32,12 +33,30 @@ public static class CategoryEndpoints
                 }, title: "Datos de categoría inválidos.");
             }
 
-            var category = new Category { Name = request.Name.Trim(), Description = request.Description };
+            var name = request.Name.Trim();
+            if (await db.Categories.AnyAsync(category => category.Name == name))
+                return DuplicateName();
+
+            var category = new Category { Name = name, Description = request.Description };
             db.Categories.Add(category);
-            await db.SaveChangesAsync();
+            try
+            {
+                await db.SaveChangesAsync();
+            }
+            catch (DbUpdateException exception) when
+                (exception.InnerException is SqliteException { SqliteExtendedErrorCode: 2067 })
+            {
+                // El índice resuelve también dos peticiones que comprobaron el nombre a la vez.
+                return DuplicateName();
+            }
 
             var response = new CategoryResponse(category.Id, category.Name, category.Description);
             return Results.Created($"/api/categories/{category.Id}", response);
         });
     }
+
+    private static IResult DuplicateName() => Results.Problem(
+        statusCode: StatusCodes.Status409Conflict,
+        title: "Nombre de categoría duplicado.",
+        detail: "Ya existe una categoría con ese nombre.");
 }

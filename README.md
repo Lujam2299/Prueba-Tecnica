@@ -4,7 +4,7 @@ Prueba técnica de entrevista. Se desarrollará por etapas pequeñas con ASP.NET
 
 ## Estado
 
-Creación de categorías con persistencia SQLite y validación de nombre implementadas. POST devuelve 201 y la ubicación del detalle; lista y detalle leen la base. Once casos BDD aprobados, incluido reinicio de la aplicación. Duplicados, edición y eliminaciones siguen pendientes. Consulta `PROGRESS.md` para retomar el trabajo.
+Creación de categorías con persistencia SQLite, nombre requerido y unicidad implementadas. POST devuelve 201 y la ubicación del detalle; lista y detalle leen la base. Suite actual: 20 casos BDD y 4 comprobaciones técnicas SQLite aprobadas. Edición, eliminaciones y productos siguen pendientes. Consulta `PROGRESS.md` para retomar el trabajo.
 
 Consulta [PLAN.md](PLAN.md) para ver el paso a paso, las etapas completadas y cuál sigue.
 
@@ -29,7 +29,9 @@ Por cada comportamiento: escenario Gherkin en español, prueba HTTP que falla po
 - SQLite en archivo para conservar datos entre reinicios; esquema administrado con migraciones de EF Core.
 - Nombres obligatorios, con espacios externos eliminados; rechazar nombres vacíos o solo espacios.
 - En creación de categorías, `string.IsNullOrWhiteSpace` rechaza nombres ausentes, null o compuestos solo por blancos (también tabulaciones y saltos de línea). `Trim()` elimina blancos externos y conserva los internos. Rechazo: 400 con `application/problem+json`, `errors.Name` y mensaje `El nombre es obligatorio.`; no se guarda ningún recurso.
-- Categorías con nombre único ignorando mayúsculas; conservar la diferencia entre letras con y sin acento. La estrategia Unicode se definirá y probará antes de implementar esta regla.
+- Categorías con nombre único ignorando mayúsculas; conservar la diferencia entre letras con y sin acento. Estrategia implementada y probada: comparación SQLite personalizada `CATEGORY_NAME`, que aplica `Trim()`, normalización Unicode NFC, `ToUpperInvariant()` y NFC nuevamente; compara el resultado de forma ordinal. Se conserva en Name el texto recibido sin blancos externos. No es una comparación lingüística para todas las culturas ni una eliminación de acentos.
+- La columna Name usa esa comparación y tiene un índice único. Tanto la consulta previa como el índice aplican la misma regla. `Electrónica`, `ELECTRÓNICA` y la ó formada con letra más acento combinante son equivalentes; `Electronica` es diferente. Los espacios internos son significativos. SQLite `NOCASE` solo cubre ASCII por defecto; véase la [documentación oficial](https://learn.microsoft.com/en-us/dotnet/standard/data/sqlite/collation).
+- Duplicados en creación: 409 Problem Details con detail `Ya existe una categoría con ese nombre.`. Se captura también la infracción del índice único (SQLite 2067); otras fallas de base no se convierten en duplicados.
 - Los nombres de productos pueden repetirse. La descripción es opcional.
 - No se han establecido longitudes máximas adicionales.
 - No permitir eliminar categorías con productos; mensaje obligatorio: `Esta categoria no se puede eliminar porque tiene productos asignados`.
@@ -57,6 +59,10 @@ Las pruebas usan Microsoft.AspNetCore.Mvc.Testing 10.0.12 y WebApplicationFactor
 
 EF Core SQLite y Design están fijados en 10.0.12; `dotnet-tools.json` fija la herramienta local dotnet-ef en esa misma versión. `CatalogoDbContext` define el modelo de almacenamiento. La migración InitialCategories, incluida en Git, crea la tabla; `Program.cs` aplica migraciones pendientes al arrancar. Esta elección simplifica una demostración local; no es una estrategia de despliegue multiinstancia.
 
+La migración UniqueCategoryNames configura la comparación y el índice único. Se comprobó actualizar desde InitialCategories conservando una categoría con acento. Si una base anterior contiene nombres equivalentes duplicados, la creación del índice falla; no se eliminan registros automáticamente. Habría que resolver esos datos antes de aplicar la restricción.
+
+`CatalogoDbContext` registra `CATEGORY_NAME` en cada conexión SQLite que administra, incluidas las de migraciones. Una herramienta externa que compare o escriba Name debe registrar la misma comparación; SQLite no incorpora esta función por sí solo. Cambiar su algoritmo en el futuro requiere revisar/reconstruir el índice existente, no solo cambiar código.
+
 La conexión predeterminada guarda `catalogo.db` en la raíz del proyecto de la API. Puede reemplazarse con `ConnectionStrings__Catalogo`; las pruebas la reemplazan antes del arranque. Los archivos de base quedan excluidos de Git.
 
 Comando comprobado para generar la primera migración (ya existe; no repetirlo):
@@ -69,4 +75,4 @@ dotnet tool run dotnet-ef migrations add InitialCategories --project src/Catalog
 
 ## Uso de IA
 
-Codex asistió en la planificación, estructura, escenarios BDD, bindings HTTP, endpoints, configuración EF/SQLite, migración y validación de nombres. Los casos se ejecutaron antes de implementar: lista vacía falló por 404; creación por 405; nombres inválidos por 201/500 y recorte por contenido incorrecto. La suite completa actual pasó con 11 casos, incluido reinicio con datos conservados. La implementación se explica por etapas; la comprensión del candidato no se da por comprobada solo por haber entregado una explicación.
+Codex asistió en la planificación, estructura, escenarios BDD, bindings HTTP, endpoints, configuración EF/SQLite, migraciones, validación y comparación Unicode. Los casos se ejecutaron antes de implementar: lista vacía falló por 404; creación por 405; nombres inválidos por 201/500; duplicados por 201 y por falta de restricción SQL. La suite completa actual pasó con 24 pruebas (20 BDD y 4 técnicas SQLite), incluidas persistencia, SQL directo y actualización del esquema. La implementación se explica por etapas; la comprensión del candidato no se da por comprobada solo por haber entregado una explicación.

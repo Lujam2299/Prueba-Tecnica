@@ -4,7 +4,7 @@ Referencia compartida para saber dónde estamos y qué sigue. Actualizaremos las
 
 ## Punto actual
 
-**Etapa 4 en curso: creación, persistencia y validación del nombre completas.** Once casos BDD aprobados. Lo siguiente es unicidad de categorías ignorando mayúsculas, con acentos y protección en la base.
+**Etapa 4 en curso: creación, persistencia, validación y unicidad completas.** Suite de 24 pruebas aprobada (20 BDD y 4 técnicas). Lo siguiente es edición de categorías con las mismas reglas y detalle inexistente.
 
 ## Ciclo que repetiremos por comportamiento
 
@@ -56,7 +56,7 @@ Resultado esperado: una prueba de aceptación real ejecutable. Este bloque resue
 - [x] Configurar EF Core 10, SQLite en archivo y migraciones conforme los escenarios requieran persistencia.
 - [x] Crear categoría válida: descripción opcional, respuesta 201 y ubicación del detalle.
 - [x] Validar nombres ausentes, null, vacíos y blancos; quitar espacios externos conservando los internos.
-- [ ] Definir, documentar y probar la estrategia Unicode de unicidad también en la base: mayúsculas ignoradas, acentos conservados, ejemplo «Electrónica».
+- [x] Definir, documentar y probar la estrategia Unicode de unicidad también en la base: mayúsculas ignoradas, acentos conservados, ejemplo «Electrónica».
 - [x] Consultar lista y detalle de categorías creadas.
 - [ ] Cubrir por BDD el detalle inexistente con 404.
 - [ ] Editar categoría y validar conflictos con otras; conservar su propio nombre es válido.

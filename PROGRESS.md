@@ -2,7 +2,15 @@
 
 ## Etapa actual
 
-Unicidad en fase roja: 9 casos HTTP y 4 comprobaciones técnicas SQLite (13 pruebas nuevas). Ejecución filtrada `FullyQualifiedName~NombreUnico|FullyQualifiedName~SqliteCategoryIntegrityTests`: código 1, 11 fallos y 2 aprobadas. Duplicados reciben 201 en vez de 409; SQL directo y actualización desde InitialCategories no restringen duplicados. Nombres sin acento y diferencias de espacios internos ya se permiten. Casos incluyen mayúsculas, Ñ, ó compuesta/descompuesta y espacios externos.
+Unicidad de creación completada. Fase roja guardada en `bf70e9e`: ejecución filtrada `FullyQualifiedName~NombreUnico|FullyQualifiedName~SqliteCategoryIntegrityTests`, código 1, 11 fallos y 2 aprobadas. Duplicados recibían 201 en vez de 409; SQL directo y actualización desde InitialCategories no restringían duplicados.
+
+Fase verde: `dotnet test Catalogo.slnx --no-restore --logger "console;verbosity=minimal"`, código 0, 24 aprobadas y 0 omitidas: 20 BDD y 4 técnicas. Casos incluyen mayúsculas, Ñ, ó compuesta/descompuesta, espacios externos, conservación de la original al reiniciar, acento distinto de ausencia de acento, espacios internos significativos, restricción mediante SQL directo y migración desde el esquema anterior.
+
+Implementación: CategoryNameCollation compara Trim + NFC + ToUpperInvariant + NFC ordinalmente. CatalogoDbContext registra CATEGORY_NAME en cada conexión; Name utiliza esa collation y un índice único. Endpoint comprueba duplicado antes del guardado y captura SQLite 2067 por conflicto de índice; devuelve Problem Details 409 con "Ya existe una categoría con ese nombre.". Migración UniqueCategoryNames generada mediante dotnet-ef (código 0) y aplicada en pruebas, conservando datos anteriores. Base local sigue ausente después de las pruebas.
+
+Limitaciones documentadas: herramientas externas deben registrar la misma collation; datos previos duplicados impiden crear el índice y no se borran automáticamente. Algoritmo explícito de casing invariable, no comparación lingüística para todas las culturas. Aún no hay edición ni se ha comprobado el camino de captura con una carrera HTTP controlada; sí se comprobó la restricción SQLite.
+
+### Historial: validación de nombre
 
 Nombre requerido y espacios completados. Fase roja guardada en `c4b15fe`: 7 nuevos casos ejecutados, 7 fallos y 0 omitidos; nombres ausentes/null devolvían 500, blancos se guardaban y espacios externos se conservaban. Ejemplos de blancos usan escapes Unicode JSON para evitar que Gherkin interprete saltos de línea.
 
@@ -49,11 +57,11 @@ Verificaciones de etapa 2:
 
 ## Siguiente paso
 
-Explicar validación del nombre. Después: unicidad Unicode también en la base, con escenarios de mayúsculas y acentos escritos antes de implementar. Usuario con experiencia web, nuevo en C#/.NET; seguir explicando por etapas.
+Explicar unicidad y comparación personalizada. Después: escenarios de edición de categoría, incluyendo mismo nombre, conflicto con otra, validaciones y recurso inexistente; implementar después de comprobar sus fallos. Usuario con experiencia web, nuevo en C#/.NET; seguir explicando por etapas.
 
 ## Pendientes
 
-Unicidad de categorías, detalle inexistente, edición, eliminaciones, productos y su relación; cobertura de integridad, ejecución limpia, documentación de demostración y guion del video. Creación válida, nombre requerido y espacios, migración inicial y reinicio persistente ya comprobados.
+Detalle inexistente, edición, eliminaciones, productos y su relación; cobertura restante de integridad, ejecución limpia, documentación de demostración y guion del video. Creación, nombre requerido y espacios, unicidad SQLite/Unicode, migraciones y reinicio persistente ya comprobados.
 
 ## Decisiones y dudas
 
