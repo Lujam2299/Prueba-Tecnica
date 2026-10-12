@@ -4,7 +4,7 @@ Referencia compartida para saber dónde estamos y qué sigue. Actualizaremos las
 
 ## Punto actual
 
-**Etapa 4 en curso: creación, persistencia, validación y unicidad completas.** Suite de 24 pruebas aprobada (20 BDD y 4 técnicas). Lo siguiente es edición de categorías con las mismas reglas y detalle inexistente.
+**Etapa 4 completada: creación, consulta y edición de categorías con validaciones.** Suite de 41 pruebas aprobada (37 BDD y 4 técnicas). Lo siguiente es la etapa 5, comenzando por creación válida de productos y su relación con categorías.
 
 ## Ciclo que repetiremos por comportamiento
 
@@ -58,8 +58,8 @@ Resultado esperado: una prueba de aceptación real ejecutable. Este bloque resue
 - [x] Validar nombres ausentes, null, vacíos y blancos; quitar espacios externos conservando los internos.
 - [x] Definir, documentar y probar la estrategia Unicode de unicidad también en la base: mayúsculas ignoradas, acentos conservados, ejemplo «Electrónica».
 - [x] Consultar lista y detalle de categorías creadas.
-- [ ] Cubrir por BDD el detalle inexistente con 404.
-- [ ] Editar categoría y validar conflictos con otras; conservar su propio nombre es válido.
+- [x] Cubrir por BDD el detalle inexistente con 404.
+- [x] Editar categoría y validar conflictos con otras; conservar su propio nombre es válido.
 
 Resultado esperado: creación, consulta y edición con escenarios aprobados y contratos de entrada/salida, sin devolver entidades EF directamente.
 

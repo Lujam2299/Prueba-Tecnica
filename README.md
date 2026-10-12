@@ -4,7 +4,7 @@ Prueba técnica de entrevista. Se desarrollará por etapas pequeñas con ASP.NET
 
 ## Estado
 
-Creación de categorías con persistencia SQLite, nombre requerido y unicidad implementadas. POST devuelve 201 y la ubicación del detalle; lista y detalle leen la base. Suite actual: 20 casos BDD y 4 comprobaciones técnicas SQLite aprobadas. Edición, eliminaciones y productos siguen pendientes. Consulta `PROGRESS.md` para retomar el trabajo.
+Creación, consulta y edición de categorías con persistencia SQLite, nombre requerido y unicidad implementadas. Suite actual: 37 casos BDD y 4 comprobaciones técnicas SQLite aprobadas. Eliminaciones y productos siguen pendientes. Consulta `PROGRESS.md` para retomar el trabajo.
 
 Consulta [PLAN.md](PLAN.md) para ver el paso a paso, las etapas completadas y cuál sigue.
 
@@ -28,10 +28,11 @@ Por cada comportamiento: escenario Gherkin en español, prueba HTTP que falla po
 
 - SQLite en archivo para conservar datos entre reinicios; esquema administrado con migraciones de EF Core.
 - Nombres obligatorios, con espacios externos eliminados; rechazar nombres vacíos o solo espacios.
-- En creación de categorías, `string.IsNullOrWhiteSpace` rechaza nombres ausentes, null o compuestos solo por blancos (también tabulaciones y saltos de línea). `Trim()` elimina blancos externos y conserva los internos. Rechazo: 400 con `application/problem+json`, `errors.Name` y mensaje `El nombre es obligatorio.`; no se guarda ningún recurso.
+- En creación y edición de categorías, `string.IsNullOrWhiteSpace` rechaza nombres ausentes, null o compuestos solo por blancos (también tabulaciones y saltos de línea). `Trim()` elimina blancos externos y conserva los internos. Rechazo: 400 con `application/problem+json`, `errors.Name` y mensaje `El nombre es obligatorio.`; no se crean ni modifican recursos.
 - Categorías con nombre único ignorando mayúsculas; conservar la diferencia entre letras con y sin acento. Estrategia implementada y probada: comparación SQLite personalizada `CATEGORY_NAME`, que aplica `Trim()`, normalización Unicode NFC, `ToUpperInvariant()` y NFC nuevamente; compara el resultado de forma ordinal. Se conserva en Name el texto recibido sin blancos externos. No es una comparación lingüística para todas las culturas ni una eliminación de acentos.
 - La columna Name usa esa comparación y tiene un índice único. Tanto la consulta previa como el índice aplican la misma regla. `Electrónica`, `ELECTRÓNICA` y la ó formada con letra más acento combinante son equivalentes; `Electronica` es diferente. Los espacios internos son significativos. SQLite `NOCASE` solo cubre ASCII por defecto; véase la [documentación oficial](https://learn.microsoft.com/en-us/dotnet/standard/data/sqlite/collation).
-- Duplicados en creación: 409 Problem Details con detail `Ya existe una categoría con ese nombre.`. Se captura también la infracción del índice único (SQLite 2067); otras fallas de base no se convierten en duplicados.
+- Duplicados en creación y edición: 409 Problem Details con detail `Ya existe una categoría con ese nombre.`. En edición se excluye la propia categoría por identificador. Se captura también la infracción del índice único (SQLite 2067); otras fallas de base no se convierten en duplicados.
+- PUT usa `CategoryRequest`, el mismo contrato de entrada que POST, y reemplaza nombre y descripción; omitir la descripción la deja en null. Conserva el identificador y responde 200 con el recurso actualizado. Primero comprueba existencia; una categoría inexistente devuelve 404 aunque el nombre enviado sea inválido. GET y PUT inexistentes devuelven Problem Details con detail `No existe una categoría con el identificador indicado.`. Los rechazos conservan las categorías anteriores.
 - Los nombres de productos pueden repetirse. La descripción es opcional.
 - No se han establecido longitudes máximas adicionales.
 - No permitir eliminar categorías con productos; mensaje obligatorio: `Esta categoria no se puede eliminar porque tiene productos asignados`.
@@ -75,4 +76,4 @@ dotnet tool run dotnet-ef migrations add InitialCategories --project src/Catalog
 
 ## Uso de IA
 
-Codex asistió en la planificación, estructura, escenarios BDD, bindings HTTP, endpoints, configuración EF/SQLite, migraciones, validación y comparación Unicode. Los casos se ejecutaron antes de implementar: lista vacía falló por 404; creación por 405; nombres inválidos por 201/500; duplicados por 201 y por falta de restricción SQL. La suite completa actual pasó con 24 pruebas (20 BDD y 4 técnicas SQLite), incluidas persistencia, SQL directo y actualización del esquema. La implementación se explica por etapas; la comprensión del candidato no se da por comprobada solo por haber entregado una explicación.
+Codex asistió en la planificación, estructura, escenarios BDD, bindings HTTP, endpoints, EF/SQLite, migraciones y validaciones. Los escenarios se ejecutaron antes de implementar: lista vacía falló por 404; creación/edición por 405; nombres inválidos por 201/500; duplicados por 201 y falta de restricción SQL; detalle inexistente por falta de error estructurado. La suite actual pasó con 41 pruebas (37 BDD y 4 técnicas SQLite), incluidas persistencia, rechazos sin cambios, SQL directo y actualización del esquema. La implementación se explica por etapas; la comprensión del candidato no se da por comprobada solo por haber entregado una explicación.

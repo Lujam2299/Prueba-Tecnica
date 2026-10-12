@@ -2,7 +2,13 @@
 
 ## Etapa actual
 
-Edición en fase roja: 17 casos nuevos ejecutados y fallidos, 0 omitidos. `dotnet test Catalogo.slnx --no-restore --filter "FullyQualifiedName~EdicionDeCategorias" --logger "console;verbosity=minimal"`, código 1. PUT devuelve 405; GET inexistente ya devuelve 404 pero sin Problem Details. Escenarios cubren 6 ediciones válidas, 5 nombres inválidos, 3 conflictos Unicode con otra categoría, 2 PUT inexistentes (nombre válido e inválido) y GET inexistente. Verifican id conservado, datos persistentes después de reiniciar y ningún cambio tras rechazos.
+Etapa 4 completada: creación, consulta y edición de categorías. Fase roja de edición guardada en `c04d870`: 17 casos nuevos ejecutados y fallidos, 0 omitidos; PUT devolvía 405 y GET inexistente 404 sin Problem Details. Casos: 6 ediciones válidas, 5 nombres inválidos, 3 conflictos Unicode con otra categoría, 2 PUT inexistentes y GET inexistente.
+
+Fase verde: `dotnet test Catalogo.slnx --no-restore --logger "console;verbosity=minimal"`, código 0, 41 pruebas aprobadas (37 BDD y 4 técnicas), 0 omitidas. Verifican id conservado, cambios persistentes al reiniciar y ningún cambio tras rechazos. PUT busca entidad con FindAsync, comprueba existencia, valida nombre y consulta duplicados excluyendo su id antes de modificar y guardar. POST y PUT comparten CategoryRequest, NameRequired y SaveWithoutNameConflict. GET/PUT inexistentes usan Problem Details 404. No cambió el esquema ni se generó otra migración.
+
+Supuestos precisados: PUT reemplaza nombre y descripción, omitir descripción la deja null; en PUT existencia se comprueba antes que validez del nombre. Eliminaciones y productos siguen pendientes.
+
+### Historial: unicidad
 
 Unicidad de creación completada. Fase roja guardada en `bf70e9e`: ejecución filtrada `FullyQualifiedName~NombreUnico|FullyQualifiedName~SqliteCategoryIntegrityTests`, código 1, 11 fallos y 2 aprobadas. Duplicados recibían 201 en vez de 409; SQL directo y actualización desde InitialCategories no restringían duplicados.
 
@@ -59,11 +65,11 @@ Verificaciones de etapa 2:
 
 ## Siguiente paso
 
-Explicar unicidad y comparación personalizada. Después: escenarios de edición de categoría, incluyendo mismo nombre, conflicto con otra, validaciones y recurso inexistente; implementar después de comprobar sus fallos. Usuario con experiencia web, nuevo en C#/.NET; seguir explicando por etapas.
+Explicar edición. Después: etapa 5, escenario de creación válida de producto y relación obligatoria con categoría, antes de implementar. Avanzar por comportamientos pequeños, incluyendo consulta con id/nombre de categoría y después validaciones/edición. Usuario con experiencia web, nuevo en C#/.NET; seguir explicando por etapas.
 
 ## Pendientes
 
-Detalle inexistente, edición, eliminaciones, productos y su relación; cobertura restante de integridad, ejecución limpia, documentación de demostración y guion del video. Creación, nombre requerido y espacios, unicidad SQLite/Unicode, migraciones y reinicio persistente ya comprobados.
+Eliminaciones, productos y su relación; cobertura restante de integridad, ejecución limpia, documentación de demostración y guion del video. Creación/consulta/edición de categorías, validaciones, unicidad SQLite/Unicode, migraciones y reinicio persistente ya comprobados.
 
 ## Decisiones y dudas
 
