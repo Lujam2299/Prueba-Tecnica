@@ -33,7 +33,7 @@ Verificaciones de etapa 2:
 
 ## Siguiente paso
 
-Explicar el primer ciclo BDD al usuario. Después: escenario de creación de categoría, persistencia EF Core/SQLite con migración e aislamiento de bases, antes de implementar el comportamiento. Usuario con experiencia web, nuevo en C#/.NET; seguir explicando por etapas. Los avances recientes siguen locales, sin subida comprobada posterior a `40ec745`.
+Primer ciclo BDD explicado al usuario. Después: escenario de creación de categoría, persistencia EF Core/SQLite con migración e aislamiento de bases, antes de implementar el comportamiento. Usuario con experiencia web, nuevo en C#/.NET; seguir explicando por etapas.
 
 ## Pendientes
 
@@ -46,3 +46,5 @@ Seguir las tecnologías y el contrato HTTP de AGENTS.md. Supuestos y dudas para 
 ## GitHub
 
 Con autorización del usuario se creó el repositorio privado https://github.com/Lujam2299/Prueba-Tecnica y se configuró como `origin`. `git push -u origin main` terminó con código 0; se verificaron en GitHub la etiqueta Private y los cuatro archivos de preparación. Nombre elegido para la URL: Prueba-Tecnica; descripción: Prueba Técnica.
+
+Con autorización del usuario se subieron los cinco commits pendientes hasta `4e4935c` mediante `git push origin main` (código 0). `git ls-remote origin refs/heads/main` coincidió con `git rev-parse HEAD`; `git status --short --branch` mostró main sincronizada con origin/main y sin cambios. Incluye guía, estructura, punto de control, escenario rojo e implementación verde. Política acordada: commits pequeños y push al cerrar etapas o sesiones.
