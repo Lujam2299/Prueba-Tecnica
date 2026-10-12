@@ -4,7 +4,7 @@ Referencia compartida para saber dónde estamos y qué sigue. Actualizaremos las
 
 ## Punto actual
 
-**Etapas 1 y 2 completadas. Lo siguiente es la etapa 3: ejecutar el primer escenario BDD.** La API puede compilarse, pero aún no tiene endpoints ni escenarios escritos.
+**Primer escenario BDD ejecutado y aprobado (etapa 3). Lo siguiente es la etapa 4: creación y persistencia de categorías.** La API devuelve una lista vacía; aún no almacena datos. El aislamiento de bases se completará al agregar SQLite.
 
 ## Ciclo que repetiremos por comportamiento
 
@@ -42,12 +42,12 @@ Conceptos a explicar: una solución agrupa proyectos; la API recibe peticiones H
 
 ### 3. Ejecutar el primer escenario BDD
 
-- [ ] Configurar Reqnroll, NUnit y el arranque de la API desde las pruebas.
-- [ ] Preparar aislamiento de datos para cada escenario.
-- [ ] Escribir primero: «Consultar categorías cuando no hay ninguna devuelve una lista vacía».
-- [ ] Crear sus bindings HTTP y comprobar el fallo por el endpoint pendiente.
-- [ ] Implementar ese comportamiento con respuesta 200 y lista vacía.
-- [ ] Comprobar que el escenario pasa y registrar el ciclo BDD.
+- [x] Configurar Reqnroll, NUnit y el arranque de la API desde las pruebas.
+- [ ] Preparar aislamiento de datos para cada escenario (aplicación aislada lista; bases pendientes al agregar SQLite).
+- [x] Escribir primero: «Consultar categorías cuando no hay ninguna devuelve una lista vacía».
+- [x] Crear sus bindings HTTP y comprobar el fallo por el endpoint pendiente.
+- [x] Implementar ese comportamiento con respuesta 200 y lista vacía.
+- [x] Comprobar que el escenario pasa y registrar el ciclo BDD.
 
 Resultado esperado: una prueba de aceptación real ejecutable. Este bloque resuelve temprano la integración de herramientas.
 

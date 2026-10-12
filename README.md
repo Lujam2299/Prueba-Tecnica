@@ -4,7 +4,7 @@ Prueba técnica de entrevista. Se desarrollará por etapas pequeñas con ASP.NET
 
 ## Estado
 
-Solución creada y compilación verificada. La API aún no tiene endpoints y el proyecto de pruebas aún no contiene escenarios. Consulta `PROGRESS.md` para retomar el trabajo.
+Primer comportamiento implementado y verificado con BDD: `GET /api/categories` devuelve 200 y `[]`. Todavía no hay creación ni persistencia de datos. Consulta `PROGRESS.md` para retomar el trabajo.
 
 Consulta [PLAN.md](PLAN.md) para ver el paso a paso, las etapas completadas y cuál sigue.
 
@@ -44,14 +44,17 @@ Desde la raíz del repositorio:
 ```powershell
 dotnet restore Catalogo.slnx
 dotnet build Catalogo.slnx --no-restore
+dotnet test Catalogo.slnx --no-restore
 ```
 
 `Catalogo.slnx` agrupa la API y las pruebas. `global.json` selecciona el SDK 10.0.401 y permite parches posteriores de esa misma banda. Los paquetes del proyecto de pruebas tienen versiones explícitas: Reqnroll.NUnit 3.3.4, NUnit 4.6.1, NUnit3TestAdapter 6.3.1 y Microsoft.NET.Test.Sdk 18.10.1. Los archivos generados de Reqnroll se ubicarán en `obj/` para excluirlos de Git.
 
 Si una terminal anterior a la instalación no reconoce `dotnet`, abre otra o usa `& 'C:\Program Files\dotnet\dotnet.exe'` en lugar de `dotnet`.
 
-Los comandos de migraciones, ejecución y pruebas se incorporarán al comprobarlos. Aún no hay funcionalidades ni escenarios ejecutables; EF Core y SQLite se agregarán cuando el comportamiento requiera persistencia.
+Las pruebas usan Microsoft.AspNetCore.Mvc.Testing 10.0.12 y WebApplicationFactory: levantan la API en un servidor de pruebas en memoria y realizan peticiones HTTP con HttpClient. Cada escenario tiene su propia aplicación, que se cierra al finalizar; no hace falta arrancar la API manualmente. La prueba actual verifica código 200, tipo JSON y arreglo vacío. EF Core, migraciones y bases aisladas se agregarán con la creación de categorías.
+
+Los comandos de migraciones y ejecución manual se incorporarán al comprobarlos.
 
 ## Uso de IA
 
-Codex asistió en la planificación, lectura de requisitos, revisión del entorno y creación de la estructura de proyectos. Se verificaron la restauración y compilación. La implementación se revisará y explicará por etapas para que el candidato pueda comprenderla y modificarla. No se han ejecutado pruebas de la API todavía.
+Codex asistió en la planificación, revisión del entorno, estructura y primer escenario BDD con sus bindings y endpoint. Se verificaron restauración y compilación; la prueba HTTP falló primero por 404 y pasó después con 200 y arreglo JSON vacío. La implementación se explica por etapas para que el candidato pueda comprenderla y modificarla; su comprensión no se da por comprobada solo por haber entregado una explicación.

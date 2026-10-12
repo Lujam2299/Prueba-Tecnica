@@ -2,7 +2,11 @@
 
 ## Etapa actual
 
-Etapa 3 en curso, fase roja comprobada: escenario ConsultarCuandoNoHayCategorias escrito y bindings HTTP creados. `dotnet test Catalogo.slnx --logger "console;verbosity=normal"` compiló y descubrió 1 escenario; terminó con código 1 porque esperaba 200 y recibió 404 al consultar /api/categories. No es un fallo de configuración. Se usa WebApplicationFactory con una instancia por escenario y cierre en AfterScenario; aún no hay base de datos.
+Primer escenario de etapa 3 completado. Fase roja: `dotnet test Catalogo.slnx --logger "console;verbosity=normal"` compiló y descubrió 1 escenario; código 1 porque esperaba 200 y recibió 404 al consultar /api/categories. Guardado antes del endpoint en commit `37ff772`.
+
+Fase verde: `dotnet test Catalogo.slnx --no-restore --logger "console;verbosity=normal"`, código 0, 1 escenario aprobado; verificó 200, application/json y arreglo con cero elementos. Endpoint organizado en CategoryEndpoints y contrato CategoryResponse. Lista vacía fija como implementación mínima, sin creación ni almacenamiento todavía.
+
+WebApplicationFactory 10.0.12 crea una aplicación por escenario y HttpClient realiza las peticiones HTTP; AfterScenario cierra los recursos. Todavía no hay base de datos; el aislamiento de bases permanece pendiente para el bloque de SQLite.
 
 Preparación del entorno (11 de octubre de 2026). Se leyeron AGENTS.md y el chat de planificación completo. Acordado trabajar por etapas y completar el alcance principal en un máximo de dos días.
 
@@ -29,9 +33,7 @@ Verificaciones de etapa 2:
 
 ## Siguiente paso
 
-Punto de control solicitado por el usuario: etapa 2 terminada, commit de estructura `34319df`. Antes de avanzar a la etapa 3, revisar juntos lo realizado y aclarar conceptos o decisiones. No iniciar escenarios ni endpoints durante esta revisión. La etapa 3 sigue pendiente; no hay pruebas BDD ejecutadas. Los commits recientes de planificación y estructura están guardados localmente; no se ha comprobado una subida posterior al commit de publicación `40ec745`.
-
-Etapa 3: escribir el escenario de consulta de categorías vacías, configurar el arranque de la API para las pruebas y sus bindings HTTP. Comprobar el fallo por el endpoint pendiente antes de implementarlo y obtener la primera prueba BDD aprobada. Si una terminal abierta previamente no reconoce `dotnet`, abrir una nueva para cargar el PATH actualizado o usar la ruta completa.
+Explicar el primer ciclo BDD al usuario. Después: escenario de creación de categoría, persistencia EF Core/SQLite con migración e aislamiento de bases, antes de implementar el comportamiento. Usuario con experiencia web, nuevo en C#/.NET; seguir explicando por etapas. Los avances recientes siguen locales, sin subida comprobada posterior a `40ec745`.
 
 ## Pendientes
 

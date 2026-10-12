@@ -1,6 +1,10 @@
+using Catalogo.Api.Endpoints;
+
 var builder = WebApplication.CreateBuilder(args);
 
 var app = builder.Build();
+
+app.MapCategoryEndpoints();
 
 app.Run();
 
