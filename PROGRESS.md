@@ -2,6 +2,8 @@
 
 ## Etapa actual
 
+Etapa 5, productos en fase roja: `dotnet test Catalogo.slnx --no-restore --filter "FullyQualifiedName~CreacionYConsultaDeProductos" --logger "console;verbosity=minimal"`, código 1; 7 casos ejecutados y fallidos, 0 omitidos. Endpoints de creación/lista no existen; detalle inexistente carece de Problem Details. Casos: lista vacía, descripción presente/ausente, persistencia tras reinicio, nombres repetidos, nombre actual de categoría tras renombrarla y detalle inexistente. Escenarios y contrato ProductResponse escritos antes de implementar.
+
 Etapa 4 completada: creación, consulta y edición de categorías. Fase roja de edición guardada en `c04d870`: 17 casos nuevos ejecutados y fallidos, 0 omitidos; PUT devolvía 405 y GET inexistente 404 sin Problem Details. Casos: 6 ediciones válidas, 5 nombres inválidos, 3 conflictos Unicode con otra categoría, 2 PUT inexistentes y GET inexistente.
 
 Fase verde: `dotnet test Catalogo.slnx --no-restore --logger "console;verbosity=minimal"`, código 0, 41 pruebas aprobadas (37 BDD y 4 técnicas), 0 omitidas. Verifican id conservado, cambios persistentes al reiniciar y ningún cambio tras rechazos. PUT busca entidad con FindAsync, comprueba existencia, valida nombre y consulta duplicados excluyendo su id antes de modificar y guardar. POST y PUT comparten CategoryRequest, NameRequired y SaveWithoutNameConflict. GET/PUT inexistentes usan Problem Details 404. No cambió el esquema ni se generó otra migración.
