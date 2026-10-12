@@ -2,6 +2,8 @@
 
 ## Etapa actual
 
+Etapa 4 en curso: escenarios de creación válida con y sin descripción, detalle, lista y conservación al reiniciar escritos antes de implementar. Fase roja: `dotnet test Catalogo.slnx --no-restore --logger "console;verbosity=minimal"`, código 1, 3 nuevos casos fallan por POST 405 en lugar de 201; el escenario de lista vacía pasa (total 4). ApiScenario asigna una ruta temporal única por escenario y reinicia conservando esa ruta; limpieza de sus archivos al finalizar.
+
 Primer escenario de etapa 3 completado. Fase roja: `dotnet test Catalogo.slnx --logger "console;verbosity=normal"` compiló y descubrió 1 escenario; código 1 porque esperaba 200 y recibió 404 al consultar /api/categories. Guardado antes del endpoint en commit `37ff772`.
 
 Fase verde: `dotnet test Catalogo.slnx --no-restore --logger "console;verbosity=normal"`, código 0, 1 escenario aprobado; verificó 200, application/json y arreglo con cero elementos. Endpoint organizado en CategoryEndpoints y contrato CategoryResponse. Lista vacía fija como implementación mínima, sin creación ni almacenamiento todavía.

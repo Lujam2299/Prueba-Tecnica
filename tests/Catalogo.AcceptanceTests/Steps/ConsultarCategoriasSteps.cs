@@ -12,7 +12,7 @@ public sealed class ConsultarCategoriasSteps(ApiScenario api)
     [Given("que no existen categorías")]
     public void GivenNoCategories()
     {
-        // Una aplicación nueva por escenario; todavía no hay almacenamiento.
+        // Cada escenario inicia la aplicación con su propia base nueva.
         api.Start();
     }
 
