@@ -2,7 +2,13 @@
 
 ## Etapa actual
 
-Validación de productos en fase roja: 13 casos BDD nuevos fallidos y una comprobación directa de FK aprobada (14 pruebas, 0 omitidas). Ejecución filtrada `FullyQualifiedName~ValidacionAlCrearProductos|FullyQualifiedName~SqliteProductIntegrityTests`, código 1. Nombres sin contenido se guardan o provocan 500, categoría ausente/inexistente provoca 500 y blancos externos se conservan. SQL directo con categoría inexistente fue rechazado por SQLite 787. Escenarios comprueban 400 Problem Details por campo, ambos requeridos ausentes, datos sin cambios tras reinicio y nombre recortado persistente.
+Validación de productos completada. Fase roja guardada en `8db4757`: 13 casos BDD fallidos y 1 comprobación directa FK aprobada, 0 omitidos. Nombres sin contenido se guardaban o provocaban 500, categoría ausente/inexistente provocaba 500 y blancos externos se conservaban. SQL directo ya rechazaba categoría inexistente con SQLite 787.
+
+Fase verde: `dotnet test Catalogo.slnx --no-restore --logger "console;verbosity=minimal"`, código 0, 62 pruebas aprobadas (57 BDD y 5 técnicas), 0 omitidas. Validación por campo en ProductEndpoints: IsNullOrWhiteSpace para nombre; CategoryId debe ser positivo y existir; se informan juntos ambos errores requeridos. ValidationProblem 400 consistente, Trim() al guardar y captura específica de SQLite 787 (la carrera entre comprobar y guardar no fue probada). Los escenarios verifican que rechazos no guarden productos ni alteren categorías, también tras reiniciar, y recorte persistente sin modificar blancos internos. No cambió el esquema. Base local sigue ausente; git diff --check sin errores.
+
+Pendiente: PUT de productos, cambio de categoría, eliminaciones y comprobación directa de restricción de eliminación. Creación y consulta de productos con sus validaciones ya completas.
+
+### Historial: creación y consulta de productos
 
 Etapa 5 en curso: creación válida, lista y detalle de productos completos. Fase roja guardada en `4add51d`: 7 casos fallidos, 0 omitidos, por endpoints pendientes. Casos: lista vacía, descripción presente/ausente, persistencia tras reinicio, nombres repetidos, nombre actual de categoría tras renombrarla y detalle inexistente.
 
@@ -75,11 +81,11 @@ Verificaciones de etapa 2:
 
 ## Siguiente paso
 
-Explicar productos y relación. Después: escenarios de nombre requerido, blancos y categoría obligatoria/existente en creación; comprobar fallos e implementar errores 400 consistentes sin guardar productos inválidos. Luego edición y cambio de categoría. Usuario con experiencia web, nuevo en C#/.NET; seguir explicando por etapas.
+Explicar validaciones de productos. Después: escenarios de edición de producto, incluido cambio de categoría, datos inválidos, inexistentes y conservación de datos tras rechazo. Comprobar fallos antes de implementar PUT. Usuario con experiencia web, nuevo en C#/.NET; seguir explicando por etapas.
 
 ## Pendientes
 
-Validaciones y edición de productos, eliminaciones de ambas entidades; cobertura restante de integridad/FK, ejecución limpia, documentación de demostración y guion del video. Categorías (creación/consulta/edición y validaciones) y productos válidos (creación/consulta, nombres repetidos y relación observable), migraciones y reinicio persistente ya comprobados.
+Edición de productos, eliminaciones de ambas entidades; cobertura restante de integridad/restricción de eliminación, ejecución limpia, documentación de demostración y guion del video. Categorías (creación/consulta/edición y validaciones) y productos (creación/consulta/validaciones, nombres repetidos y relación observable), clave foránea por SQL directo, migraciones y reinicio persistente ya comprobados.
 
 ## Decisiones y dudas
 
