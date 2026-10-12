@@ -2,6 +2,16 @@
 
 ## Etapa actual
 
+Etapa 7 completa, revisión del 12 de octubre de 2026. COVERAGE.md relaciona requisitos de AGENTS.md con características y comprobaciones técnicas. Los comportamientos de negocio obligatorios tienen cobertura HTTP; índice único, clave foránea, RESTRICT y migraciones también tienen pruebas técnicas. Se agregó ScenarioIsolationTests para dos aplicaciones simultáneas con el mismo nombre de categoría y eliminación independiente, comprobada tras reiniciar.
+
+Verificación: dotnet test Catalogo.slnx --no-restore --logger "console;verbosity=minimal", código 0, 91 aprobadas (84 BDD y 7 técnicas), 0 omitidas. La nueva prueba complementa la auditoría del soporte existente: pasó sin cambios de API y sin fase roja artificial. Test-Path src/Catalogo.Api/catalogo.db: False; git diff --check sin errores.
+
+No se modificaron endpoints, esquema ni migraciones. Revisión de errores de negocio: 400/404/409 Problem Details y mensaje obligatorio exacto. No se probó toda permutación de orden; aislamiento respaldado por rutas temporales únicas y comprobación explícita. JSON malformado y carreras HTTP controladas no forman parte de esta verificación.
+
+Siguiente paso concreto: etapa 8, documentación OpenAPI y una forma sencilla de ejecutar peticiones; completar ejemplos y comprobar instrucciones desde directorio limpio. Video y repaso del candidato siguen después.
+
+### Historial: cierre de eliminaciones
+
 Etapa 6 completa: eliminaciones de productos y categorías con restricción de productos asignados. Fase roja en 1378774: dotnet test Catalogo.slnx --no-restore --filter "FullyQualifiedName~EliminacionDeCategorias|FullyQualifiedName~DatabaseRejectsDeletingCategoryWithProducts" --logger "console;verbosity=minimal", código 1, 5 casos HTTP fallidos por 405 y 1 prueba SQL aprobada, 0 omitidos.
 
 Fase verde: dotnet test Catalogo.slnx --no-restore --logger "console;verbosity=minimal", código 0, 90 aprobadas (84 BDD y 6 técnicas), 0 omitidas. DELETE de categorías devuelve 204/404 y consulta productos antes de eliminar; conflicto 409 con detail exacto requerido. SQLite RESTRICT ya configurado se comprobó por SQL directo (1811), conservando ambos recursos tras reiniciar. Endpoint captura SQLite 787/1811 al guardar. No cambió el esquema ni se generaron migraciones.

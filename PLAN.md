@@ -4,7 +4,7 @@ Referencia compartida para saber dónde estamos y qué sigue. Actualizaremos las
 
 ## Punto actual
 
-**Etapa 6 completada: eliminaciones y restricciones de categorías y productos.** Suite de 90 pruebas aprobada (84 BDD y 6 técnicas). Sigue etapa 7: revisar cobertura e integridad contra los requisitos.
+**Etapa 7 completada: cobertura e integridad revisadas.** Suite de 91 pruebas aprobada (84 BDD y 7 técnicas), incluida comprobación explícita de aislamiento. COVERAGE.md relaciona requisitos y pruebas. Sigue etapa 8: OpenAPI, demostración y reproducibilidad.
 
 ## Ciclo que repetiremos por comportamiento
 
@@ -88,12 +88,12 @@ Resultado esperado: creación, consulta y edición de productos verificadas medi
 
 ### 7. Completar cobertura e integridad
 
-- [ ] Revisar todos los escenarios obligatorios contra AGENTS.md.
-- [ ] Mantener errores estructurados y consistentes, preferentemente Problem Details.
+- [x] Revisar todos los escenarios obligatorios contra AGENTS.md.
+- [x] Mantener errores estructurados y consistentes, preferentemente Problem Details.
 - [x] Comprobar persistencia después de reiniciar la aplicación.
-- [ ] Comprobar unicidad y relación protegidas por la base.
-- [ ] Comprobar que las pruebas no usan la base local de la API ni dependen del orden.
-- [ ] Ejecutar la suite completa y registrar resultados reales.
+- [x] Comprobar unicidad y relación protegidas por la base.
+- [x] Comprobar que las pruebas no usan la base local de la API ni dependen del orden.
+- [x] Ejecutar la suite completa y registrar resultados reales.
 
 ### 8. Preparar la demostración y comprobar reproducibilidad
 
