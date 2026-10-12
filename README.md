@@ -4,7 +4,7 @@ Prueba técnica de entrevista. Se desarrollará por etapas pequeñas con ASP.NET
 
 ## Estado
 
-Creación válida de categorías con persistencia SQLite implementada. POST devuelve 201 y la ubicación del detalle; lista y detalle leen la base. Cuatro casos BDD aprobados, incluido reinicio de la aplicación. Validaciones de nombres, duplicados, edición y eliminaciones siguen pendientes. Consulta `PROGRESS.md` para retomar el trabajo.
+Creación de categorías con persistencia SQLite y validación de nombre implementadas. POST devuelve 201 y la ubicación del detalle; lista y detalle leen la base. Once casos BDD aprobados, incluido reinicio de la aplicación. Duplicados, edición y eliminaciones siguen pendientes. Consulta `PROGRESS.md` para retomar el trabajo.
 
 Consulta [PLAN.md](PLAN.md) para ver el paso a paso, las etapas completadas y cuál sigue.
 
@@ -28,6 +28,7 @@ Por cada comportamiento: escenario Gherkin en español, prueba HTTP que falla po
 
 - SQLite en archivo para conservar datos entre reinicios; esquema administrado con migraciones de EF Core.
 - Nombres obligatorios, con espacios externos eliminados; rechazar nombres vacíos o solo espacios.
+- En creación de categorías, `string.IsNullOrWhiteSpace` rechaza nombres ausentes, null o compuestos solo por blancos (también tabulaciones y saltos de línea). `Trim()` elimina blancos externos y conserva los internos. Rechazo: 400 con `application/problem+json`, `errors.Name` y mensaje `El nombre es obligatorio.`; no se guarda ningún recurso.
 - Categorías con nombre único ignorando mayúsculas; conservar la diferencia entre letras con y sin acento. La estrategia Unicode se definirá y probará antes de implementar esta regla.
 - Los nombres de productos pueden repetirse. La descripción es opcional.
 - No se han establecido longitudes máximas adicionales.
@@ -68,4 +69,4 @@ dotnet tool run dotnet-ef migrations add InitialCategories --project src/Catalog
 
 ## Uso de IA
 
-Codex asistió en la planificación, estructura, escenarios BDD, bindings HTTP, endpoints, configuración EF/SQLite y generación de la migración. La lista vacía falló primero por 404 y luego pasó. Los casos de creación fallaron primero por 405 en lugar de 201; después pasaron los cuatro casos, incluido reinicio con datos conservados. La implementación se explica por etapas; la comprensión del candidato no se da por comprobada solo por haber entregado una explicación.
+Codex asistió en la planificación, estructura, escenarios BDD, bindings HTTP, endpoints, configuración EF/SQLite, migración y validación de nombres. Los casos se ejecutaron antes de implementar: lista vacía falló por 404; creación por 405; nombres inválidos por 201/500 y recorte por contenido incorrecto. La suite completa actual pasó con 11 casos, incluido reinicio con datos conservados. La implementación se explica por etapas; la comprensión del candidato no se da por comprobada solo por haber entregado una explicación.

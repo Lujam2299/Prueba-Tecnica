@@ -24,7 +24,15 @@ public static class CategoryEndpoints
 
         app.MapPost("/api/categories", async (CreateCategoryRequest request, CatalogoDbContext db) =>
         {
-            var category = new Category { Name = request.Name, Description = request.Description };
+            if (string.IsNullOrWhiteSpace(request.Name))
+            {
+                return Results.ValidationProblem(new Dictionary<string, string[]>
+                {
+                    ["Name"] = ["El nombre es obligatorio."]
+                }, title: "Datos de categoría inválidos.");
+            }
+
+            var category = new Category { Name = request.Name.Trim(), Description = request.Description };
             db.Categories.Add(category);
             await db.SaveChangesAsync();
 

@@ -4,7 +4,7 @@ Referencia compartida para saber dónde estamos y qué sigue. Actualizaremos las
 
 ## Punto actual
 
-**Etapa 4 en curso: creación válida y persistencia completas.** Cuatro casos BDD aprobados. Lo siguiente son escenarios de nombres requeridos, espacios y unicidad, antes de implementar sus validaciones.
+**Etapa 4 en curso: creación, persistencia y validación del nombre completas.** Once casos BDD aprobados. Lo siguiente es unicidad de categorías ignorando mayúsculas, con acentos y protección en la base.
 
 ## Ciclo que repetiremos por comportamiento
 
@@ -55,7 +55,7 @@ Resultado esperado: una prueba de aceptación real ejecutable. Este bloque resue
 
 - [x] Configurar EF Core 10, SQLite en archivo y migraciones conforme los escenarios requieran persistencia.
 - [x] Crear categoría válida: descripción opcional, respuesta 201 y ubicación del detalle.
-- [ ] Validar nombres vacíos y espacios; quitar espacios externos.
+- [x] Validar nombres ausentes, null, vacíos y blancos; quitar espacios externos conservando los internos.
 - [ ] Definir, documentar y probar la estrategia Unicode de unicidad también en la base: mayúsculas ignoradas, acentos conservados, ejemplo «Electrónica».
 - [x] Consultar lista y detalle de categorías creadas.
 - [ ] Cubrir por BDD el detalle inexistente con 404.

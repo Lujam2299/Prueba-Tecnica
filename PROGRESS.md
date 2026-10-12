@@ -2,7 +2,13 @@
 
 ## Etapa actual
 
-Bloque de nombre requerido en fase roja: 7 casos BDD nuevos compilados y ejecutados, 7 fallos y 0 omitidos. `dotnet test Catalogo.slnx --no-restore --filter "FullyQualifiedName~NombreRequeridoDeCategoria" --logger "console;verbosity=minimal"` terminó con código 1. Nombres ausentes/null devuelven 500; vacíos, espacios y blancos de control se guardan con 201; espacios externos no se recortan. Ejemplos de blancos usan escapes Unicode JSON para evitar que Gherkin interprete saltos de línea. Escenarios comprueban error estructurado 400, ausencia de filas y nombre recortado persistente tras reiniciar.
+Nombre requerido y espacios completados. Fase roja guardada en `c4b15fe`: 7 nuevos casos ejecutados, 7 fallos y 0 omitidos; nombres ausentes/null devolvían 500, blancos se guardaban y espacios externos se conservaban. Ejemplos de blancos usan escapes Unicode JSON para evitar que Gherkin interprete saltos de línea.
+
+Fase verde: `dotnet test Catalogo.slnx --no-restore --logger "console;verbosity=minimal"`, código 0, 11 casos aprobados y 0 omitidos. `string.IsNullOrWhiteSpace` rechaza nombre ausente, null, vacío, espacios, tabulaciones y saltos; `Results.ValidationProblem` devuelve 400, application/problem+json y errors.Name con "El nombre es obligatorio.". `Trim()` elimina blancos externos y conserva los internos; los escenarios comprueban ausencia de filas tras rechazo y nombre persistente al reiniciar. Contrato de entrada nullable para validar explícitamente; entidad sigue con Name requerido. No cambió el esquema ni se generó migración.
+
+Estado actual: creación válida, persistencia, lista, detalle creado y validación de nombre completos. Pendiente unicidad, edición, eliminaciones, productos y errores adicionales.
+
+### Historial de etapas anteriores
 
 Etapa 4 en curso: creación válida, descripción opcional, detalle, lista y conservación al reiniciar completados. Fase roja guardada en `14ff828`: 3 nuevos casos fallaron por POST 405 en lugar de 201; lista vacía pasó (total 4). Fase verde: `dotnet test Catalogo.slnx --no-restore --logger "console;verbosity=minimal"`, código 0, 4 casos aprobados, ninguno omitido.
 
@@ -41,11 +47,11 @@ Verificaciones de etapa 2:
 
 ## Siguiente paso
 
-Explicar creación y persistencia. Después escribir escenarios de nombres requeridos y espacios; comprobar fallos antes de validar. Luego unicidad Unicode también en la base con escenarios de acentos y mayúsculas. Usuario con experiencia web, nuevo en C#/.NET; seguir explicando por etapas.
+Explicar validación del nombre. Después: unicidad Unicode también en la base, con escenarios de mayúsculas y acentos escritos antes de implementar. Usuario con experiencia web, nuevo en C#/.NET; seguir explicando por etapas.
 
 ## Pendientes
 
-Validaciones y unicidad de categorías, detalle inexistente, edición, eliminaciones, productos y su relación; cobertura de integridad, ejecución limpia, documentación de demostración y guion del video. Creación válida, migración inicial y reinicio persistente ya comprobados.
+Unicidad de categorías, detalle inexistente, edición, eliminaciones, productos y su relación; cobertura de integridad, ejecución limpia, documentación de demostración y guion del video. Creación válida, nombre requerido y espacios, migración inicial y reinicio persistente ya comprobados.
 
 ## Decisiones y dudas
 
