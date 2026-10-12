@@ -2,6 +2,8 @@
 
 ## Etapa actual
 
+Validación de productos en fase roja: 13 casos BDD nuevos fallidos y una comprobación directa de FK aprobada (14 pruebas, 0 omitidas). Ejecución filtrada `FullyQualifiedName~ValidacionAlCrearProductos|FullyQualifiedName~SqliteProductIntegrityTests`, código 1. Nombres sin contenido se guardan o provocan 500, categoría ausente/inexistente provoca 500 y blancos externos se conservan. SQL directo con categoría inexistente fue rechazado por SQLite 787. Escenarios comprueban 400 Problem Details por campo, ambos requeridos ausentes, datos sin cambios tras reinicio y nombre recortado persistente.
+
 Etapa 5 en curso: creación válida, lista y detalle de productos completos. Fase roja guardada en `4add51d`: 7 casos fallidos, 0 omitidos, por endpoints pendientes. Casos: lista vacía, descripción presente/ausente, persistencia tras reinicio, nombres repetidos, nombre actual de categoría tras renombrarla y detalle inexistente.
 
 Product, ProductRequest y ProductEndpoints agregados; ProductResponse incluye CategoryId y CategoryName. DbContext agrega Products y relación con categoría con DeleteBehavior.Restrict. Migración AddProducts generada con dotnet-ef, código 0, y aplicada en pruebas. Primera ejecución completa encontró 7 fallos nuevos por traducción de filtros/orden sobre el record proyectado; se corrigió filtrando y ordenando entidades antes de proyectar. Segunda ejecución `dotnet test Catalogo.slnx --no-restore --logger "console;verbosity=minimal"`: código 0, 48 aprobadas (44 BDD y 4 técnicas), 0 omitidas. La base local de aplicación sigue ausente.
