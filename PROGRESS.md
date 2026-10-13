@@ -2,6 +2,8 @@
 
 ## Etapa actual
 
+PLAN.md actualizado con el estado de entrega confirmado: guion local, pruebas manuales, repaso parcial, video grabado y README preparado. Pendientes: enlace de video, acceso del evaluador, revisión personal del README, repaso restante y ejercicio en vivo. Deploy descartado. Se respetaron las modificaciones en curso del usuario a README.md, sin incluirlas en este cambio. Actualización documental; no se repitieron pruebas.
+
 Etapa 9 en preparación de entrega, 13 de octubre de 2026. El usuario confirmó que grabó el video y realizó pruebas manuales en Swagger. Se repasaron endpoints de productos, DbContext y relación Gherkin/Reqnroll/NUnit. Deploy descartado por decisión del usuario. El guion personal permanece local y excluido de Git.
 
 README reorganizado para el evaluador: ejecución numerada, pruebas, decisiones con motivos, supuestos, uso y revisión de IA, contrato HTTP, ejemplos y limitaciones. El usuario lo personalizará antes de entregar. Enlace del video y acceso del evaluador al repositorio privado pendientes. Verificación documental: git diff --check sin errores; guion confirmado ignorado. No cambió código ni se ejecutaron nuevamente pruebas: último resultado comprobado sigue siendo 92 aprobadas.
