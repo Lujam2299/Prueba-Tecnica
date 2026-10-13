@@ -1,105 +1,174 @@
 # API de categorías y productos
 
-Prueba técnica de entrevista. Se desarrollará por etapas pequeñas con ASP.NET Core Minimal APIs (.NET 10), Entity Framework Core 10, SQLite y pruebas BDD con Reqnroll y NUnit.
+API REST desarrollada como prueba técnica con ASP.NET Core Minimal APIs (.NET 10), Entity Framework Core, SQLite y pruebas BDD con Reqnroll y NUnit.
 
-## Estado
-
-Creación, consulta y edición de categorías completas; creación, validación, lista, detalle y edición de productos implementados con SQLite. Suite actual: 85 casos BDD y 7 comprobaciones técnicas aprobadas. Eliminaciones de productos y categorías completas, incluida la restricción con productos. Cobertura, documentación OpenAPI, interfaz de pruebas y reproducibilidad local verificadas. Pendiente guion del video y repaso del candidato. Consulta [COVERAGE.md](COVERAGE.md) para ver la relación entre requisitos y pruebas. Consulta `PROGRESS.md` para retomar el trabajo.
-
-Consulta [PLAN.md](PLAN.md) para ver el paso a paso, las etapas completadas y cuál sigue.
+Permite crear, consultar, editar y eliminar categorías y productos. Evita categorías duplicadas y rechaza eliminar categorías con productos asignados. Los datos se conservan en un archivo SQLite entre reinicios.
 
 ## Requisitos
 
-- SDK de .NET 10 (permite compilar y ejecutar pruebas).
-- Git. VS Code es el editor disponible en este equipo.
+- SDK compatible con global.json: .NET SDK 10.0.401 o un parche posterior de la misma banda 10.0.4xx.
+- Git y acceso al repositorio mientras sea privado.
+- Internet para restaurar los paquetes NuGet.
+- Navegador o cliente HTTP; no se necesita un IDE específico ni instalar un servidor de base de datos.
 
-Verificación del entorno:
+Comprueba las herramientas:
 
-```powershell
+```sh
 dotnet --info
 git --version
 ```
 
-## Forma de trabajo
+## Cómo ejecutar la aplicación
 
-Por cada comportamiento: escenario Gherkin en español, prueba HTTP que falla por la funcionalidad pendiente, implementación mínima, prueba que pasa y commit pequeño. La solución tendrá un proyecto para la API y otro para las pruebas. Estas usarán bases aisladas.
+### 1. Clonar y entrar en el repositorio
 
-## Decisiones y supuestos
+```sh
+git clone https://github.com/Lujam2299/Prueba-Tecnica.git
+cd Prueba-Tecnica
+```
 
-- SQLite en archivo para conservar datos entre reinicios; esquema administrado con migraciones de EF Core.
-- Nombres obligatorios, con espacios externos eliminados; rechazar nombres vacíos o solo espacios.
-- En creación y edición de categorías, `string.IsNullOrWhiteSpace` rechaza nombres ausentes, null o compuestos solo por blancos (también tabulaciones y saltos de línea). `Trim()` elimina blancos externos y conserva los internos. Rechazo: 400 con `application/problem+json`, `errors.Name` y mensaje `El nombre es obligatorio.`; no se crean ni modifican recursos.
-- Categorías con nombre único ignorando mayúsculas; conservar la diferencia entre letras con y sin acento. Estrategia implementada y probada: comparación SQLite personalizada `CATEGORY_NAME`, que aplica `Trim()`, normalización Unicode NFC, `ToUpperInvariant()` y NFC nuevamente; compara el resultado de forma ordinal. Se conserva en Name el texto recibido sin blancos externos. No es una comparación lingüística para todas las culturas ni una eliminación de acentos.
-- La columna Name usa esa comparación y tiene un índice único. Tanto la consulta previa como el índice aplican la misma regla. `Electrónica`, `ELECTRÓNICA` y la ó formada con letra más acento combinante son equivalentes; `Electronica` es diferente. Los espacios internos son significativos. SQLite `NOCASE` solo cubre ASCII por defecto; véase la [documentación oficial](https://learn.microsoft.com/en-us/dotnet/standard/data/sqlite/collation).
-- Duplicados en creación y edición: 409 Problem Details con detail `Ya existe una categoría con ese nombre.`. En edición se excluye la propia categoría por identificador. Se captura también la infracción del índice único (SQLite 2067); otras fallas de base no se convierten en duplicados.
-- PUT usa `CategoryRequest`, el mismo contrato de entrada que POST, y reemplaza nombre y descripción; omitir la descripción la deja en null. Conserva el identificador y responde 200 con el recurso actualizado. Primero comprueba existencia; una categoría inexistente devuelve 404 aunque el nombre enviado sea inválido. GET y PUT inexistentes devuelven Problem Details con detail `No existe una categoría con el identificador indicado.`. Los rechazos conservan las categorías anteriores.
-- Los nombres de productos pueden repetirse. La descripción es opcional.
-- POST /api/products crea productos válidos con 201 y ubicación del detalle. GET de lista devuelve 200 (arreglo vacío si no hay productos); detalle 200 o 404 Problem Details. ProductResponse contiene id, name, description, categoryId y categoryName. El nombre de categoría se obtiene de la relación al consultar, por lo que muestra también los cambios posteriores de nombre.
-- Creación de productos: nombre ausente/null/vacío o solo blancos devuelve 400 con errors.Name: `El nombre es obligatorio.`. El nombre válido se guarda con Trim(), sin cambiar espacios internos. CategoryId ausente/null/cero/negativo devuelve 400 con errors.CategoryId: `La categoría es obligatoria.`; los identificadores de SQLite son enteros positivos. Un identificador positivo inexistente devuelve `La categoría indicada no existe.`. Se incluyen ambos errores cuando ambos campos faltan. Formato: application/problem+json. Los rechazos no guardan productos ni alteran categorías.
-- PUT /api/products/{id} comparte ProductRequest y validaciones con POST. Reemplaza nombre, descripción y categoría; conserva el identificador, recorta blancos externos y permite nombres repetidos. Omitir descripción la deja null. Devuelve 200 con el producto y su categoría actual. Comprueba primero existencia: producto inexistente devuelve 404 Problem Details incluso con cuerpo {}. Entradas inválidas devuelven 400 y conservan datos anteriores. Edición y cambio de categoría se comprobaron también al reiniciar, sin modificar otros productos ni categorías.
-- DELETE /api/products/{id} elimina el producto con 204 y cuerpo vacío; inexistente o ya eliminado devuelve 404 Problem Details. La eliminación persiste tras reiniciar y conserva categoría y otros productos. No requiere cambios de esquema.
-- No se han establecido longitudes máximas adicionales.
-- DELETE /api/categories/{id}: categoría sin productos devuelve 204 sin cuerpo; inexistente o ya eliminada devuelve 404 Problem Details. Con productos devuelve 409 y detail exacto: `Esta categoria no se puede eliminar porque tiene productos asignados`. El rechazo conserva categoría y productos incluso al reiniciar. Retirar todos los productos permite eliminar la categoría; retirar solo uno no basta.
-- Respuestas: GET 200/404, POST 201, PUT 200/404, DELETE 204/404; validaciones 400 y conflictos 409. Los errores usarán un formato consistente.
-- Entrega: repositorio, README y video. Deploy opcional después de completar los requisitos principales.
+### 2. Restaurar dependencias y herramientas
 
-Pendiente confirmar con el contacto: tratamiento de espacios, longitudes máximas y repetición de nombres de productos.
-
-## Ejecución y pruebas
-
-Desde la raíz del repositorio:
-
-```powershell
+```sh
 dotnet restore Catalogo.slnx
 dotnet tool restore
+```
+
+Los paquetes tienen versiones explícitas. EF Core y dotnet-ef utilizan 10.0.12; la herramienta se declara en dotnet-tools.json.
+
+### 3. Compilar
+
+```sh
 dotnet build Catalogo.slnx --no-restore
-dotnet test Catalogo.slnx --no-restore
 ```
 
-`Catalogo.slnx` agrupa la API y las pruebas. `global.json` selecciona el SDK 10.0.401 y permite parches posteriores de esa misma banda. Los paquetes del proyecto de pruebas tienen versiones explícitas: Reqnroll.NUnit 3.3.4, NUnit 4.6.1, NUnit3TestAdapter 6.3.1 y Microsoft.NET.Test.Sdk 18.10.1. Los archivos generados de Reqnroll se ubicarán en `obj/` para excluirlos de Git.
-
-Si una terminal anterior a la instalación no reconoce `dotnet`, abre otra o usa `& 'C:\Program Files\dotnet\dotnet.exe'` en lugar de `dotnet`.
-
-Las pruebas usan Microsoft.AspNetCore.Mvc.Testing 10.0.12 y WebApplicationFactory: levantan la API en un servidor de pruebas en memoria y realizan peticiones HTTP con HttpClient. Cada escenario utiliza su propio archivo SQLite temporal, sin conexión compartida; lo elimina al finalizar. El reinicio cierra la aplicación y abre otra conservando el mismo archivo dentro del escenario. No hace falta arrancar la API manualmente.
-
-EF Core SQLite y Design están fijados en 10.0.12; `dotnet-tools.json` fija la herramienta local dotnet-ef en esa misma versión. `CatalogoDbContext` define el modelo de almacenamiento. La migración InitialCategories, incluida en Git, crea la tabla; `Program.cs` aplica migraciones pendientes al arrancar. Esta elección simplifica una demostración local; no es una estrategia de despliegue multiinstancia.
-
-La migración UniqueCategoryNames configura la comparación y el índice único. Se comprobó actualizar desde InitialCategories conservando una categoría con acento. Si una base anterior contiene nombres equivalentes duplicados, la creación del índice falla; no se eliminan registros automáticamente. Habría que resolver esos datos antes de aplicar la restricción.
-
-AddProducts crea Products y la clave foránea CategoryId → Categories.Id con eliminación restringida. El nombre de producto es no nulo en la tabla y no tiene índice único. Se verificaron creación, validaciones, consultas, descripción opcional, repetición de nombres y persistencia. SQL directo confirmó que la clave foránea rechaza un producto con categoría inexistente (SQLite 787); el endpoint también captura esa infracción si la categoría desaparece entre la validación y el guardado, aunque no se ha probado esa carrera controlada. SQL directo también confirmó que eliminar una categoría con productos falla con SQLite 1811 (RESTRICT) y conserva los datos tras reiniciar. DELETE captura específicamente SQLite 787/1811 ante una relación que impida el guardado; la carrera entre la comprobación y el guardado no se ha probado de forma controlada. Cada prueba usa su propio archivo temporal.
-
-`CatalogoDbContext` registra `CATEGORY_NAME` en cada conexión SQLite que administra, incluidas las de migraciones. Una herramienta externa que compare o escriba Name debe registrar la misma comparación; SQLite no incorpora esta función por sí solo. Cambiar su algoritmo en el futuro requiere revisar/reconstruir el índice existente, no solo cambiar código.
-
-La conexión predeterminada guarda `catalogo.db` en la raíz del proyecto de la API. Puede reemplazarse con `ConnectionStrings__Catalogo`; las pruebas la reemplazan antes del arranque. Los archivos de base quedan excluidos de Git.
-
-Comando comprobado para generar la primera migración (ya existe; no repetirlo):
-
-```powershell
-dotnet tool run dotnet-ef migrations add InitialCategories --project src/Catalogo.Api --output-dir Data/Migrations
-```
-
-`CatalogoDbContextFactory` permite a la herramienta generar el esquema sin arrancar la API. Su ruta relativa es solo una configuración de diseño; para aplicar manualmente una migración a un archivo específico habría que indicar su conexión. Las pruebas verificaron la aplicación automática de la migración. La ejecución manual y los ejemplos se comprobaron sobre una copia limpia; véase la sección de demostración.
-
-## Arrancar y probar sin depender de un IDE
-
-Desde la raíz, después de restaurar y compilar:
+### 4. Iniciar la API
 
 ```sh
 dotnet run --project src/Catalogo.Api --no-build --no-launch-profile --urls http://localhost:5080
 ```
 
-La aplicación aplica las migraciones al arrancar y crea `src/Catalogo.Api/catalogo.db` si no existe. Detén el servidor con Ctrl+C; reiniciarlo conserva los datos. Si el puerto está ocupado, cambia 5080 y usa ese puerto también en las peticiones. Para usar otra base, configura `ConnectionStrings__Catalogo` con una conexión SQLite antes de arrancar (por ejemplo, `Data Source=/ruta/catalogo.db`); la carpeta debe existir y ser escribible.
+El arranque aplica las migraciones pendientes y crea src/Catalogo.Api/catalogo.db si no existe. No se requiere ejecutar migraciones manualmente para empezar.
 
-- Interfaz de pruebas: [Swagger UI](http://localhost:5080/swagger/index.html).
-- Contrato importable: [OpenAPI JSON](http://localhost:5080/openapi/v1.json).
+Mantén abierta la terminal. Ctrl+C detiene el servidor; reiniciarlo conserva los datos. Si el puerto está ocupado, cambia 5080 tanto en el comando como en las peticiones.
 
-Swagger permite expandir una operación, pulsar **Try it out**, editar el cuerpo JSON y pulsar **Execute**. Crear primero una categoría y usar su id para crear productos. La interfaz y sus recursos se sirven desde la API, sin desarrollar frontend ni exigir un IDE. La documentación se habilita también sin perfil Development para simplificar esta entrega local. Swagger UI usa el documento generado por Microsoft.AspNetCore.OpenApi, con paquetes fijados en 10.2.3 y 10.0.12 respectivamente; [documentación oficial de esta integración](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/openapi/aspnetcore-openapi?view=aspnetcore-10.0).
+### 5. Abrir y probar
 
-En Postman u otro cliente que acepte OpenAPI, importa la URL del documento o el JSON descargado y configura la dirección de la API como `http://localhost:5080`. No se requiere autenticación. Si el cliente no admite OpenAPI 3.1, puede realizar las peticiones HTTP directamente.
+- [Swagger UI](http://localhost:5080/swagger/index.html): explorar endpoints y enviar peticiones mediante **Try it out → Execute**.
+- [OpenAPI JSON](http://localhost:5080/openapi/v1.json): importar el contrato en clientes compatibles con OpenAPI 3.1.
 
-### Ejemplos con curl
+Crea primero una categoría y utiliza el id devuelto para crear productos. En Swagger, **Server response** contiene el resultado real; los ejemplos de **Responses** describen resultados posibles.
 
-Ejecuta desde la raíz, en otra terminal mientras el servidor sigue abierto. En Windows PowerShell usa `curl.exe` en lugar de `curl` para evitar el alias de versiones antiguas. Los cuerpos están en archivos JSON UTF-8 para evitar diferencias de comillas entre shells.
+### Configuración de SQLite
+
+La conexión puede reemplazarse mediante la variable ConnectionStrings__Catalogo. Ejemplo en PowerShell, antes de iniciar:
+
+```powershell
+$env:ConnectionStrings__Catalogo = 'Data Source=C:/ruta/catalogo.db'
+```
+
+En Bash:
+
+```sh
+export ConnectionStrings__Catalogo='Data Source=/ruta/catalogo.db'
+```
+
+La carpeta elegida debe existir y ser escribible. Los archivos de datos quedan excluidos de Git.
+
+## Cómo ejecutar las pruebas
+
+Desde la raíz, después de restaurar dependencias:
+
+```sh
+dotnet test Catalogo.slnx --no-restore
+```
+
+El comando compila y ejecuta las pruebas. Si ya compilaste y no cambiaste el código:
+
+```sh
+dotnet test Catalogo.slnx --no-build --no-restore
+```
+
+No necesitas iniciar la API: WebApplicationFactory la levanta para las pruebas y HttpClient realiza las peticiones HTTP. Cada escenario usa un archivo SQLite temporal propio y lo elimina al finalizar, sin modificar la base local.
+
+Los escenarios Gherkin están en tests/Catalogo.AcceptanceTests/Features/. Reqnroll conecta sus frases con los métodos de Steps/; NUnit ejecuta las pruebas y verifica resultados con aserciones.
+
+La última ejecución verificada tuvo **92 pruebas aprobadas, 0 fallidas y 0 omitidas**: 85 casos BDD y 7 comprobaciones técnicas. Cubren CRUD, validaciones, Unicode, relaciones, errores, persistencia, migraciones, aislamiento y documentación. [COVERAGE.md](COVERAGE.md) relaciona requisitos y pruebas.
+
+Se comprobó también una copia limpia sin bin/, obj/ ni base previa: restauración de dependencias y herramientas, compilación sin advertencias ni errores, y las 92 pruebas aprobadas. Se inició el servidor real y se probaron peticiones con curl. La comprobación se realizó en Windows; otros sistemas operativos no se han verificado.
+
+## Estructura
+
+```text
+src/Catalogo.Api/
+  Program.cs       Configuración y composición
+  Endpoints/       Operaciones HTTP por entidad
+  Contracts/       Datos de entrada y salida
+  Models/          Entidades
+  Data/            Contexto, comparación de nombres y migraciones
+tests/Catalogo.AcceptanceTests/
+  Features/        Escenarios Gherkin en español
+  Steps/           Bindings HTTP y verificaciones
+  Support/         Arranque, aislamiento y comprobaciones técnicas
+examples/          Cuerpos JSON para demostración
+```
+
+## Decisiones importantes y sus motivos
+
+- **Minimal APIs y estructura sencilla:** mantener una implementación pequeña y fácil de recorrer, sin capas innecesarias para el alcance. Los endpoints se organizan por entidad y Program.cs concentra la composición.
+- **SQLite en archivo:** persistir datos sin exigir instalar o administrar un servidor de base de datos.
+- **EF Core y migraciones:** configurar relaciones y restricciones en el modelo y versionar los cambios de esquema. Las migraciones crean categorías, agregan unicidad y crean productos.
+- **Migraciones al iniciar:** simplificar la ejecución local; no es una estrategia de despliegue multiinstancia.
+- **Contratos de entrada y salida:** controlar el formato HTTP sin exponer entidades EF directamente. ProductResponse incluye categoryId y categoryName.
+- **Validación HTTP y restricciones SQLite:** ofrecer errores comprensibles y proteger la integridad incluso si se omite la API.
+- **Comparación Unicode explícita:** SQLite NOCASE no cubre todos los caracteres Unicode. CATEGORY_NAME aplica Trim, normalización NFC, ToUpperInvariant y NFC nuevamente; compara ordinalmente. Electrónica y ELECTRÓNICA son equivalentes, pero Electronica es distinto. Consultas e índice único utilizan esa regla; el texto se guarda conservando su escritura, sin blancos externos.
+- **Clave foránea y eliminación restringida:** evitar eliminar categorías con productos y perder datos relacionados.
+- **Problem Details:** devolver errores de negocio estructurados y consistentes.
+- **BDD mediante HTTP:** comprobar comportamiento observable. Para funcionalidades nuevas se escribieron escenarios y se comprobó el fallo antes de implementar. Las verificaciones complementarias de auditoría no simulan una fase roja.
+- **Bases aisladas:** evitar dependencia entre escenarios y proteger la base de la aplicación. La persistencia se comprueba reiniciando con el mismo archivo de prueba.
+- **Swagger y curl:** permitir evaluación sin frontend propio ni dependencia de un IDE. La documentación se habilita también sin perfil Development para esta entrega local.
+
+## Supuestos adoptados
+
+En aspectos no especificados con precisión, se adoptaron estas reglas:
+
+- Recortar blancos externos del nombre y conservar los internos. Rechazar nombres ausentes, null, vacíos o compuestos solo por blancos.
+- Permitir nombres repetidos de productos; exigir nombres únicos de categorías según la comparación indicada.
+- Diferenciar letras acentuadas de letras sin acento.
+- Permitir descripción opcional. PUT reemplaza los campos: omitir descripción la deja en null.
+- No imponer longitudes máximas adicionales.
+- CategoryId debe ser un entero positivo de una categoría existente.
+- En PUT se comprueba existencia del recurso antes de validar los valores recibidos.
+- Las listas vacías devuelven 200 con un arreglo vacío.
+- No implementar autenticación, frontend, paginación ni despliegue público, fuera de la entrega acordada.
+
+El contacto indicó que no se requiere frontend y que un enlace público sería un extra. Se decidió entregar ejecución local, repositorio y video. Tratamiento de espacios, longitudes y repetición de nombres de productos se mantienen como supuestos, sin confirmación adicional documentada.
+
+## Contrato HTTP
+
+| Operación | Categorías | Productos |
+| --- | --- | --- |
+| GET lista | 200 | 200 |
+| GET detalle | 200 / 404 | 200 / 404 |
+| POST | 201 / 400 / 409 | 201 / 400 |
+| PUT | 200 / 400 / 404 / 409 | 200 / 400 / 404 |
+| DELETE | 204 / 404 / 409 | 204 / 404 |
+
+POST devuelve el recurso y Location. PUT conserva el id. DELETE exitoso devuelve 204 sin cuerpo.
+
+Nombre de categoría duplicado: 409 con detail **Ya existe una categoría con ese nombre.**
+
+Categoría con productos: 409 con detail exacto:
+
+```text
+Esta categoria no se puede eliminar porque tiene productos asignados
+```
+
+El rechazo conserva categoría y productos. Retirar todos los productos permite eliminar la categoría. Lista y detalle de productos muestran el identificador y nombre actual de categoría.
+
+## Ejemplos con curl
+
+Con el servidor abierto, ejecuta desde la raíz en otra terminal. En Windows PowerShell usa curl.exe para evitar el alias de versiones antiguas. Los cuerpos JSON se leen de archivos para evitar diferencias de comillas entre shells.
 
 ```sh
 curl -i http://localhost:5080/api/categories
@@ -107,7 +176,7 @@ curl -i http://localhost:5080/api/categories -H "Content-Type: application/json"
 curl -i http://localhost:5080/api/categories -H "Content-Type: application/json" --data-binary "@examples/category-duplicate.json"
 ```
 
-Resultados: lista 200, creación 201 con `Location`, duplicado 409. Anota el id devuelto; en los siguientes ejemplos se usa 1 como ejemplo, no como garantía. Sustituye el id en las URLs y el `categoryId` de `examples/product.json` y `examples/product-update.json` por el obtenido.
+Resultados esperados: 200, 201 y 409 si el nombre no existía antes de crearlo. Anota el id devuelto. El número 1 de los siguientes ejemplos es ilustrativo: reemplázalo por los ids reales y ajusta categoryId en los archivos JSON de productos.
 
 ```sh
 curl -i http://localhost:5080/api/categories/1
@@ -121,16 +190,34 @@ curl -i -X DELETE http://localhost:5080/api/products/1
 curl -i -X DELETE http://localhost:5080/api/categories/1
 ```
 
-Consulta 200, creación 201, edición 200, datos inválidos 400, categoría con productos 409, eliminación de producto 204 y luego eliminación de categoría 204. Si hay más productos en la categoría, debes eliminarlos todos. El ejemplo de categoría inexistente usa 2147483647: cámbialo si ese id existe en tu base.
+Resultados: consultas 200, creación 201, edición 200, validación 400, categoría con productos 409 y eliminaciones finales 204 si no quedan otros productos. El ejemplo inválido usa 2147483647 como categoría inexistente: cámbialo si ese id existe.
 
-Para editar una categoría, modifica nombre y descripción en `examples/category.json` y envíalo con `curl -i -X PUT http://localhost:5080/api/categories/1 -H "Content-Type: application/json" --data-binary "@examples/category.json"`. Para cambiar la categoría de un producto, crea otra categoría y utiliza su id en `examples/product-update.json` antes de ejecutar PUT. Los cambios se observan en lista y detalle, también después de reiniciar.
+Para editar categorías, modifica examples/category.json y envíalo con PUT a /api/categories/{id}. Para cambiar la categoría de un producto, crea otra categoría y usa su id en examples/product-update.json antes de ejecutar PUT. Confirma con GET; reinicia y consulta otra vez para comprobar persistencia.
 
-### Comprobación desde un directorio limpio
+## Uso de IA y revisión
 
-Se copiaron únicamente los archivos fuente a un directorio temporal, sin `.git`, `bin`, `obj` ni base previa. Allí se ejecutaron `dotnet restore`, `dotnet tool restore`, `dotnet build --no-restore` y `dotnet test --no-build --no-restore` sobre Catalogo.slnx: compilación sin advertencias ni errores y 92 pruebas aprobadas. Se arrancó la copia con el comando anterior, que aplicó las tres migraciones, y se verificaron OpenAPI, Swagger y los ejemplos de creación, edición, validación, conflicto y eliminación mediante curl.exe. Estas peticiones modificaron solo la base de la copia temporal.
+Se utilizó Codex para apoyar la planificación, estructura, escenarios Gherkin, bindings, endpoints, configuración de EF Core y migraciones, documentación y ejemplos.
 
-Un evaluador con acceso al repositorio privado puede clonar con `git clone https://github.com/Lujam2299/Prueba-Tecnica.git`, entrar en `Prueba-Tecnica` y seguir los comandos de restauración, compilación y ejecución anteriores. Git, SDK y conexión para restaurar NuGet son necesarios; no hace falta Visual Studio, VS Code ni Postman. La comprobación se realizó en Windows; la ejecución en otros sistemas no se ha verificado.
+Las propuestas se contrastaron con requisitos y se verificaron mediante:
 
-## Uso de IA
+- Escenarios HTTP con fallo previo y resultado correcto posterior en las funcionalidades desarrolladas mediante BDD.
+- Suite completa: 92 pruebas aprobadas en la última verificación.
+- SQL directo para unicidad, clave foránea, eliminación restringida y migraciones con conservación de datos.
+- Una prueba de dos aplicaciones independientes para comprobar aislamiento.
+- Restauración, compilación y pruebas desde copia limpia, además de peticiones reales con curl.
 
-Codex asistió en la planificación, estructura, escenarios BDD, bindings HTTP, endpoints, EF/SQLite, migraciones y validaciones. Los escenarios se ejecutaron antes de implementar: validaciones de productos fallaron por 201/500 y blancos conservados; después se corrigieron. La suite actual pasó con 92 pruebas (85 BDD y 7 técnicas), incluidas persistencia, rechazos sin cambios, SQL directo y actualización del esquema. La implementación se explica por etapas; la comprensión del candidato no se da por comprobada solo por haber entregado una explicación.
+Como candidato, realicé pruebas manuales en Swagger y repasé el flujo de los endpoints de productos, CatalogoDbContext y la integración de Gherkin, Reqnroll y NUnit. También grabé el video de demostración. No se afirma una revisión línea por línea de todo el código ni dominio completo de todas las herramientas; el repaso continúa.
+
+## Video de demostración
+
+El video ya está grabado. Su enlace se añadirá al completar la entrega; aún no está incorporado en este README.
+
+## Limitaciones conocidas
+
+- No se verificaron deploy público ni otros sistemas operativos; ejecución comprobada localmente en Windows.
+- No se provocaron carreras HTTP controladas entre validación y guardado. Sí se comprobaron restricciones por SQL directo y se capturan sus infracciones específicas.
+- La comparación Unicode no es una equivalencia lingüística universal. Herramientas externas que escriban o comparen nombres deben registrar CATEGORY_NAME. Cambiar su algoritmo requiere revisar y reconstruir el índice.
+- Datos previos con categorías equivalentes duplicadas impiden crear el índice; no se eliminan automáticamente.
+- La cobertura de errores se centra en reglas de negocio; JSON malformado y errores inesperados no forman parte de la verificación documentada.
+
+[COVERAGE.md](COVERAGE.md) relaciona requisitos y pruebas. [PROGRESS.md](PROGRESS.md) conserva el historial de verificaciones y [PLAN.md](PLAN.md) el plan de trabajo.

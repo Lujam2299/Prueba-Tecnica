@@ -2,6 +2,12 @@
 
 ## Etapa actual
 
+Etapa 9 en preparación de entrega, 13 de octubre de 2026. El usuario confirmó que grabó el video y realizó pruebas manuales en Swagger. Se repasaron endpoints de productos, DbContext y relación Gherkin/Reqnroll/NUnit. Deploy descartado por decisión del usuario. El guion personal permanece local y excluido de Git.
+
+README reorganizado para el evaluador: ejecución numerada, pruebas, decisiones con motivos, supuestos, uso y revisión de IA, contrato HTTP, ejemplos y limitaciones. El usuario lo personalizará antes de entregar. Enlace del video y acceso del evaluador al repositorio privado pendientes. Verificación documental: git diff --check sin errores; guion confirmado ignorado. No cambió código ni se ejecutaron nuevamente pruebas: último resultado comprobado sigue siendo 92 aprobadas.
+
+### Historial: preparación de demostración
+
 Etapa 8 completa. Fase roja de documentación en fc723ea: 1 escenario fallido por GET /openapi/v1.json 404. Se agregaron Microsoft.AspNetCore.OpenApi 10.0.12 y SwaggerUI 10.2.3, AddOpenApi/MapOpenApi y Swagger en /swagger/index.html, además de metadatos de contratos y estados en los diez endpoints. Documentación accesible sin depender del perfil de entorno. No hay frontend propio.
 
 Una primera compilación falló por sintaxis en la edición automática de metadatos; se corrigió antes de verificar. Suite en workspace: código 0, 92 aprobadas (85 BDD y 7 técnicas), 0 omitidas. El escenario nuevo comprueba operaciones, cuerpos JSON, estados, categoryName y recursos de Swagger.
