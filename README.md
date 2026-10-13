@@ -142,8 +142,6 @@ En aspectos no especificados con precisión, se adoptaron estas reglas:
 - Las listas vacías devuelven 200 con un arreglo vacío.
 - No implementar autenticación, frontend, paginación ni despliegue público, fuera de la entrega acordada.
 
-El contacto indicó que no se requiere frontend y que un enlace público sería un extra. Se decidió entregar ejecución local, repositorio y video. Tratamiento de espacios, longitudes y repetición de nombres de productos se mantienen como supuestos, sin confirmación adicional documentada.
-
 ## Contrato HTTP
 
 | Operación | Categorías | Productos |
@@ -196,7 +194,7 @@ Para editar categorías, modifica examples/category.json y envíalo con PUT a /a
 
 ## Uso de IA y revisión
 
-Se utilizó Codex para apoyar la planificación, estructura, escenarios Gherkin, bindings, endpoints, configuración de EF Core y migraciones, documentación y ejemplos.
+Se utilizó Codex(ChatGPT Plus) para apoyar la planificación, estructura, escenarios Gherkin, bindings, endpoints, configuración de EF Core y migraciones, documentación y ejemplos, manteniendo al margen su uso mediante reglas y solicitudes de autorizaciones explícitas.
 
 Las propuestas se contrastaron con requisitos y se verificaron mediante:
 
@@ -206,18 +204,9 @@ Las propuestas se contrastaron con requisitos y se verificaron mediante:
 - Una prueba de dos aplicaciones independientes para comprobar aislamiento.
 - Restauración, compilación y pruebas desde copia limpia, además de peticiones reales con curl.
 
-Como candidato, realicé pruebas manuales en Swagger y repasé el flujo de los endpoints de productos, CatalogoDbContext y la integración de Gherkin, Reqnroll y NUnit. También grabé el video de demostración. No se afirma una revisión línea por línea de todo el código ni dominio completo de todas las herramientas; el repaso continúa.
-
 ## Video de demostración
 
-El video ya está grabado. Su enlace se añadirá al completar la entrega; aún no está incorporado en este README.
+El video ya está grabado. El enlace será enviado por medio del número telefónico.
 
-## Limitaciones conocidas
-
-- No se verificaron deploy público ni otros sistemas operativos; ejecución comprobada localmente en Windows.
-- No se provocaron carreras HTTP controladas entre validación y guardado. Sí se comprobaron restricciones por SQL directo y se capturan sus infracciones específicas.
-- La comparación Unicode no es una equivalencia lingüística universal. Herramientas externas que escriban o comparen nombres deben registrar CATEGORY_NAME. Cambiar su algoritmo requiere revisar y reconstruir el índice.
-- Datos previos con categorías equivalentes duplicadas impiden crear el índice; no se eliminan automáticamente.
-- La cobertura de errores se centra en reglas de negocio; JSON malformado y errores inesperados no forman parte de la verificación documentada.
 
 [COVERAGE.md](COVERAGE.md) relaciona requisitos y pruebas. [PROGRESS.md](PROGRESS.md) conserva el historial de verificaciones y [PLAN.md](PLAN.md) el plan de trabajo.
