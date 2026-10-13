@@ -4,7 +4,7 @@ Prueba técnica de entrevista. Se desarrollará por etapas pequeñas con ASP.NET
 
 ## Estado
 
-Creación, consulta y edición de categorías completas; creación, validación, lista, detalle y edición de productos implementados con SQLite. Suite actual: 84 casos BDD y 7 comprobaciones técnicas aprobadas. Eliminaciones de productos y categorías completas, incluida la restricción con productos. Cobertura e integridad revisadas; pendiente documentación de demostración y reproducibilidad. Consulta [COVERAGE.md](COVERAGE.md) para ver la relación entre requisitos y pruebas. Consulta `PROGRESS.md` para retomar el trabajo.
+Creación, consulta y edición de categorías completas; creación, validación, lista, detalle y edición de productos implementados con SQLite. Suite actual: 85 casos BDD y 7 comprobaciones técnicas aprobadas. Eliminaciones de productos y categorías completas, incluida la restricción con productos. Cobertura, documentación OpenAPI, interfaz de pruebas y reproducibilidad local verificadas. Pendiente guion del video y repaso del candidato. Consulta [COVERAGE.md](COVERAGE.md) para ver la relación entre requisitos y pruebas. Consulta `PROGRESS.md` para retomar el trabajo.
 
 Consulta [PLAN.md](PLAN.md) para ver el paso a paso, las etapas completadas y cuál sigue.
 
@@ -43,7 +43,7 @@ Por cada comportamiento: escenario Gherkin en español, prueba HTTP que falla po
 - Respuestas: GET 200/404, POST 201, PUT 200/404, DELETE 204/404; validaciones 400 y conflictos 409. Los errores usarán un formato consistente.
 - Entrega: repositorio, README y video. Deploy opcional después de completar los requisitos principales.
 
-Pendiente confirmar con el contacto: interfaz de documentación suficiente para demostrar la API, tratamiento de espacios, longitudes máximas y repetición de nombres de productos.
+Pendiente confirmar con el contacto: tratamiento de espacios, longitudes máximas y repetición de nombres de productos.
 
 ## Ejecución y pruebas
 
@@ -78,8 +78,59 @@ Comando comprobado para generar la primera migración (ya existe; no repetirlo):
 dotnet tool run dotnet-ef migrations add InitialCategories --project src/Catalogo.Api --output-dir Data/Migrations
 ```
 
-`CatalogoDbContextFactory` permite a la herramienta generar el esquema sin arrancar la API. Su ruta relativa es solo una configuración de diseño; para aplicar manualmente una migración a un archivo específico habría que indicar su conexión. Las pruebas verificaron la aplicación automática de la migración. La ejecución manual de la API y sus ejemplos se comprobarán en una etapa posterior.
+`CatalogoDbContextFactory` permite a la herramienta generar el esquema sin arrancar la API. Su ruta relativa es solo una configuración de diseño; para aplicar manualmente una migración a un archivo específico habría que indicar su conexión. Las pruebas verificaron la aplicación automática de la migración. La ejecución manual y los ejemplos se comprobaron sobre una copia limpia; véase la sección de demostración.
+
+## Arrancar y probar sin depender de un IDE
+
+Desde la raíz, después de restaurar y compilar:
+
+```sh
+dotnet run --project src/Catalogo.Api --no-build --no-launch-profile --urls http://localhost:5080
+```
+
+La aplicación aplica las migraciones al arrancar y crea `src/Catalogo.Api/catalogo.db` si no existe. Detén el servidor con Ctrl+C; reiniciarlo conserva los datos. Si el puerto está ocupado, cambia 5080 y usa ese puerto también en las peticiones. Para usar otra base, configura `ConnectionStrings__Catalogo` con una conexión SQLite antes de arrancar (por ejemplo, `Data Source=/ruta/catalogo.db`); la carpeta debe existir y ser escribible.
+
+- Interfaz de pruebas: [Swagger UI](http://localhost:5080/swagger/index.html).
+- Contrato importable: [OpenAPI JSON](http://localhost:5080/openapi/v1.json).
+
+Swagger permite expandir una operación, pulsar **Try it out**, editar el cuerpo JSON y pulsar **Execute**. Crear primero una categoría y usar su id para crear productos. La interfaz y sus recursos se sirven desde la API, sin desarrollar frontend ni exigir un IDE. La documentación se habilita también sin perfil Development para simplificar esta entrega local. Swagger UI usa el documento generado por Microsoft.AspNetCore.OpenApi, con paquetes fijados en 10.2.3 y 10.0.12 respectivamente; [documentación oficial de esta integración](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/openapi/aspnetcore-openapi?view=aspnetcore-10.0).
+
+En Postman u otro cliente que acepte OpenAPI, importa la URL del documento o el JSON descargado y configura la dirección de la API como `http://localhost:5080`. No se requiere autenticación. Si el cliente no admite OpenAPI 3.1, puede realizar las peticiones HTTP directamente.
+
+### Ejemplos con curl
+
+Ejecuta desde la raíz, en otra terminal mientras el servidor sigue abierto. En Windows PowerShell usa `curl.exe` en lugar de `curl` para evitar el alias de versiones antiguas. Los cuerpos están en archivos JSON UTF-8 para evitar diferencias de comillas entre shells.
+
+```sh
+curl -i http://localhost:5080/api/categories
+curl -i http://localhost:5080/api/categories -H "Content-Type: application/json" --data-binary "@examples/category.json"
+curl -i http://localhost:5080/api/categories -H "Content-Type: application/json" --data-binary "@examples/category-duplicate.json"
+```
+
+Resultados: lista 200, creación 201 con `Location`, duplicado 409. Anota el id devuelto; en los siguientes ejemplos se usa 1 como ejemplo, no como garantía. Sustituye el id en las URLs y el `categoryId` de `examples/product.json` y `examples/product-update.json` por el obtenido.
+
+```sh
+curl -i http://localhost:5080/api/categories/1
+curl -i http://localhost:5080/api/products -H "Content-Type: application/json" --data-binary "@examples/product.json"
+curl -i http://localhost:5080/api/products
+curl -i http://localhost:5080/api/products/1
+curl -i -X PUT http://localhost:5080/api/products/1 -H "Content-Type: application/json" --data-binary "@examples/product-update.json"
+curl -i http://localhost:5080/api/products -H "Content-Type: application/json" --data-binary "@examples/invalid-product.json"
+curl -i -X DELETE http://localhost:5080/api/categories/1
+curl -i -X DELETE http://localhost:5080/api/products/1
+curl -i -X DELETE http://localhost:5080/api/categories/1
+```
+
+Consulta 200, creación 201, edición 200, datos inválidos 400, categoría con productos 409, eliminación de producto 204 y luego eliminación de categoría 204. Si hay más productos en la categoría, debes eliminarlos todos. El ejemplo de categoría inexistente usa 2147483647: cámbialo si ese id existe en tu base.
+
+Para editar una categoría, modifica nombre y descripción en `examples/category.json` y envíalo con `curl -i -X PUT http://localhost:5080/api/categories/1 -H "Content-Type: application/json" --data-binary "@examples/category.json"`. Para cambiar la categoría de un producto, crea otra categoría y utiliza su id en `examples/product-update.json` antes de ejecutar PUT. Los cambios se observan en lista y detalle, también después de reiniciar.
+
+### Comprobación desde un directorio limpio
+
+Se copiaron únicamente los archivos fuente a un directorio temporal, sin `.git`, `bin`, `obj` ni base previa. Allí se ejecutaron `dotnet restore`, `dotnet tool restore`, `dotnet build --no-restore` y `dotnet test --no-build --no-restore` sobre Catalogo.slnx: compilación sin advertencias ni errores y 92 pruebas aprobadas. Se arrancó la copia con el comando anterior, que aplicó las tres migraciones, y se verificaron OpenAPI, Swagger y los ejemplos de creación, edición, validación, conflicto y eliminación mediante curl.exe. Estas peticiones modificaron solo la base de la copia temporal.
+
+Un evaluador con acceso al repositorio privado puede clonar con `git clone https://github.com/Lujam2299/Prueba-Tecnica.git`, entrar en `Prueba-Tecnica` y seguir los comandos de restauración, compilación y ejecución anteriores. Git, SDK y conexión para restaurar NuGet son necesarios; no hace falta Visual Studio, VS Code ni Postman. La comprobación se realizó en Windows; la ejecución en otros sistemas no se ha verificado.
 
 ## Uso de IA
 
-Codex asistió en la planificación, estructura, escenarios BDD, bindings HTTP, endpoints, EF/SQLite, migraciones y validaciones. Los escenarios se ejecutaron antes de implementar: validaciones de productos fallaron por 201/500 y blancos conservados; después se corrigieron. La suite actual pasó con 91 pruebas (84 BDD y 7 técnicas), incluidas persistencia, rechazos sin cambios, SQL directo y actualización del esquema. La implementación se explica por etapas; la comprensión del candidato no se da por comprobada solo por haber entregado una explicación.
+Codex asistió en la planificación, estructura, escenarios BDD, bindings HTTP, endpoints, EF/SQLite, migraciones y validaciones. Los escenarios se ejecutaron antes de implementar: validaciones de productos fallaron por 201/500 y blancos conservados; después se corrigieron. La suite actual pasó con 92 pruebas (85 BDD y 7 técnicas), incluidas persistencia, rechazos sin cambios, SQL directo y actualización del esquema. La implementación se explica por etapas; la comprensión del candidato no se da por comprobada solo por haber entregado una explicación.

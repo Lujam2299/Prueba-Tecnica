@@ -13,7 +13,7 @@ public static class CategoryEndpoints
         app.MapGet("/api/categories", async (CatalogoDbContext db) =>
             Results.Ok(await db.Categories.AsNoTracking().OrderBy(category => category.Id)
                 .Select(category => new CategoryResponse(category.Id, category.Name, category.Description))
-                .ToListAsync()));
+                .ToListAsync())).WithTags("Categorías").Produces<CategoryResponse[]>(200);
 
         app.MapGet("/api/categories/{id:int}", async (int id, CatalogoDbContext db) =>
         {
@@ -21,7 +21,7 @@ public static class CategoryEndpoints
             return category is null
                 ? CategoryNotFound()
                 : Results.Ok(new CategoryResponse(category.Id, category.Name, category.Description));
-        });
+        }).WithTags("Categorías").Produces<CategoryResponse>(200).ProducesProblem(404);
 
         app.MapPost("/api/categories", async (CategoryRequest request, CatalogoDbContext db) =>
         {
@@ -41,7 +41,7 @@ public static class CategoryEndpoints
 
             var response = new CategoryResponse(category.Id, category.Name, category.Description);
             return Results.Created($"/api/categories/{category.Id}", response);
-        });
+        }).WithTags("Categorías").Produces<CategoryResponse>(201).ProducesValidationProblem(400).ProducesProblem(409);
 
         app.MapPut("/api/categories/{id:int}", async (int id, CategoryRequest request, CatalogoDbContext db) =>
         {
@@ -62,7 +62,7 @@ public static class CategoryEndpoints
                 return DuplicateName();
 
             return Results.Ok(new CategoryResponse(category.Id, category.Name, category.Description));
-        });
+        }).WithTags("Categorías").Produces<CategoryResponse>(200).ProducesValidationProblem(400).ProducesProblem(404).ProducesProblem(409);
 
         app.MapDelete("/api/categories/{id:int}", async (int id, CatalogoDbContext db) =>
         {
@@ -86,7 +86,7 @@ public static class CategoryEndpoints
                 return CategoryHasProducts();
             }
             return Results.NoContent();
-        });
+        }).WithTags("Categorías").Produces(204).ProducesProblem(404).ProducesProblem(409);
     }
 
     private static IResult CategoryHasProducts() => Results.Problem(

@@ -3,6 +3,7 @@ using Catalogo.Api.Data;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
+builder.Services.AddOpenApi();
 
 var connectionString = builder.Configuration.GetConnectionString("Catalogo")
     ?? $"Data Source={Path.Combine(builder.Environment.ContentRootPath, "catalogo.db")}";
@@ -19,6 +20,12 @@ using (var scope = app.Services.CreateScope())
 
 app.MapCategoryEndpoints();
 app.MapProductEndpoints();
+app.MapOpenApi();
+app.UseSwaggerUI(options =>
+{
+    options.SwaggerEndpoint("/openapi/v1.json", "Catálogo API v1");
+    options.DocumentTitle = "Catálogo: categorías y productos";
+});
 
 app.Run();
 

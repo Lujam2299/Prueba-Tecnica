@@ -2,6 +2,16 @@
 
 ## Etapa actual
 
+Etapa 8 completa. Fase roja de documentación en fc723ea: 1 escenario fallido por GET /openapi/v1.json 404. Se agregaron Microsoft.AspNetCore.OpenApi 10.0.12 y SwaggerUI 10.2.3, AddOpenApi/MapOpenApi y Swagger en /swagger/index.html, además de metadatos de contratos y estados en los diez endpoints. Documentación accesible sin depender del perfil de entorno. No hay frontend propio.
+
+Una primera compilación falló por sintaxis en la edición automática de metadatos; se corrigió antes de verificar. Suite en workspace: código 0, 92 aprobadas (85 BDD y 7 técnicas), 0 omitidas. El escenario nuevo comprueba operaciones, cuerpos JSON, estados, categoryName y recursos de Swagger.
+
+Copia limpia temporal sin .git/bin/obj/base previa: restore, tool restore, build --no-restore (0 advertencias/errores), test --no-build --no-restore: todos código 0, 92 aprobadas. Servidor real en localhost:5080 con --no-launch-profile: migraciones aplicadas, OpenAPI 3.1.1 y Swagger HTTP 200. curl.exe comprobó POST categoría 201, duplicado 409, POST producto 201, PUT 200, validación 400, restricción exacta 409, DELETE producto/categoría 204. Se detuvo el servidor al terminar. Base del workspace ausente; solo la copia temporal recibió datos. No se verificó otro sistema operativo ni una interacción visual completa del navegador.
+
+README contiene arranque, URLs, importación del contrato, configuración y ejemplos con archivos JSON para evitar diferencias de shell; el id 1 es solo ilustrativo y debe sustituirse. No cambiaron migraciones ni reglas de negocio. Siguiente paso: etapa 9, guion del video, repaso del código y práctica de un cambio en vivo. Comprensión del candidato, grabación/publicación y acceso del evaluador siguen pendientes.
+
+### Historial: auditoría de cobertura
+
 Etapa 7 completa, revisión del 12 de octubre de 2026. COVERAGE.md relaciona requisitos de AGENTS.md con características y comprobaciones técnicas. Los comportamientos de negocio obligatorios tienen cobertura HTTP; índice único, clave foránea, RESTRICT y migraciones también tienen pruebas técnicas. Se agregó ScenarioIsolationTests para dos aplicaciones simultáneas con el mismo nombre de categoría y eliminación independiente, comprobada tras reiniciar.
 
 Verificación: dotnet test Catalogo.slnx --no-restore --logger "console;verbosity=minimal", código 0, 91 aprobadas (84 BDD y 7 técnicas), 0 omitidas. La nueva prueba complementa la auditoría del soporte existente: pasó sin cambios de API y sin fase roja artificial. Test-Path src/Catalogo.Api/catalogo.db: False; git diff --check sin errores.

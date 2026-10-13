@@ -11,7 +11,7 @@ public static class ProductEndpoints
     public static void MapProductEndpoints(this WebApplication app)
     {
         app.MapGet("/api/products", async (CatalogoDbContext db) =>
-            Results.Ok(await Responses(db.Products.OrderBy(product => product.Id)).ToListAsync()));
+            Results.Ok(await Responses(db.Products.OrderBy(product => product.Id)).ToListAsync())).WithTags("Productos").Produces<ProductResponse[]>(200);
 
         app.MapGet("/api/products/{id:int}", async (int id, CatalogoDbContext db) =>
         {
@@ -19,7 +19,7 @@ public static class ProductEndpoints
             return product is null
                 ? ProductNotFound()
                 : Results.Ok(product);
-        });
+        }).WithTags("Productos").Produces<ProductResponse>(200).ProducesProblem(404);
 
         app.MapPost("/api/products", async (ProductRequest request, CatalogoDbContext db) =>
         {
@@ -39,7 +39,7 @@ public static class ProductEndpoints
 
             var response = await Responses(db.Products.Where(saved => saved.Id == product.Id)).SingleAsync();
             return Results.Created($"/api/products/{product.Id}", response);
-        });
+        }).WithTags("Productos").Produces<ProductResponse>(201).ProducesValidationProblem(400);
 
         app.MapPut("/api/products/{id:int}", async (int id, ProductRequest request, CatalogoDbContext db) =>
         {
@@ -59,7 +59,7 @@ public static class ProductEndpoints
 
             var response = await Responses(db.Products.Where(saved => saved.Id == id)).SingleAsync();
             return Results.Ok(response);
-        });
+        }).WithTags("Productos").Produces<ProductResponse>(200).ProducesValidationProblem(400).ProducesProblem(404);
 
         app.MapDelete("/api/products/{id:int}", async (int id, CatalogoDbContext db) =>
         {
@@ -70,7 +70,7 @@ public static class ProductEndpoints
             db.Products.Remove(product);
             await db.SaveChangesAsync();
             return Results.NoContent();
-        });
+        }).WithTags("Productos").Produces(204).ProducesProblem(404);
     }
 
     private static IResult ProductNotFound() =>

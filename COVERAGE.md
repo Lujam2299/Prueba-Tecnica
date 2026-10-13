@@ -43,4 +43,4 @@ Los errores de negocio comprobados usan Problem Details: validaciones 400, inexi
 
 No se provocaron carreras HTTP controladas entre consultar y guardar; sí se comprobaron las restricciones SQLite mediante SQL directo. La comparación Unicode es la estrategia explícita documentada en README, no una equivalencia lingüística universal.
 
-OpenAPI, peticiones de demostración y reproducibilidad desde un directorio limpio corresponden al paso 8 y siguen pendientes. La comprensión del candidato y la grabación del video se revisarán en el paso 9.
+Actualización del paso 8: Documentacion.feature verifica por HTTP el documento OpenAPI, las diez operaciones, sus respuestas y cuerpos, categoryName y los recursos de Swagger UI. La suite completa pasa con 92 pruebas (85 BDD y 7 técnicas), tanto en el workspace como en una copia limpia. README registra la verificación del servidor real y ejemplos curl; comprensión del candidato y grabación del video siguen pendientes en el paso 9.
