@@ -4,7 +4,7 @@ Referencia compartida para saber dónde estamos y qué sigue. Actualizaremos las
 
 ## Punto actual
 
-**Etapas 1–8 completadas; etapa 9 en curso.** Última suite verificada: 92 pruebas aprobadas (85 BDD y 7 técnicas). Guion personal creado solo en local, video grabado según confirmación del usuario y README reorganizado para la entrega, en revisión personal. Falta publicar y verificar el enlace del video, confirmar acceso al repositorio, finalizar el repaso. Deploy descartado por decisión del usuario.
+**Etapa 8 completada: OpenAPI, Swagger UI, ejemplos curl y comprobación desde copia limpia.** Suite de 92 pruebas aprobada (85 BDD y 7 técnicas). Sigue etapa 9: guion del video y repaso del código.
 
 ## Ciclo que repetiremos por comportamiento
 
@@ -105,20 +105,10 @@ Resultado esperado: creación, consulta y edición de productos verificadas medi
 
 ### 9. Preparar la entrega
 
-- [x] Crear un guion corto que demuestre los requisitos, guardado solo en local y excluido de Git.
-- [x] Realizar pruebas manuales con Swagger (confirmado por el usuario).
-- [x] Repasar el flujo de ProductEndpoints, CatalogoDbContext e integración Gherkin/Reqnroll/NUnit.
-- [ ] Completar el repaso de migraciones y arranque de la aplicación.
-- [x] Usuario: grabar el video (confirmado por el usuario; su contenido no se revisó aquí).
-- [ ] Publicar el video y comprobar que su enlace permita al evaluador reproducirlo.
-- [x] Reorganizar README con ejecución paso a paso, decisiones y motivos, supuestos y revisión del uso de IA.
-- [ ] Usuario: personalizar y revisar el README final, añadir el enlace del video y subir la versión de entrega.
-- [ ] Revisar acceso del evaluador al repositorio privado o decidir hacerlo público con autorización.
-- [ ] Confirmar enlaces de entrega y requisitos completos.
+- [x] Usuario: grabar y publicar el video, y comprobar su enlace.
+- [x] Revisar acceso del evaluador al repositorio privado o decidir hacerlo público con autorización.
+- [x] Confirmar enlaces de entrega y requisitos completos.
 
-### 10. Extra opcional
-
-Deploy considerado y descartado por decisión del usuario. No forma parte de los pendientes de entrega; no hay alojamiento público verificado.
 
 ## Tiempo y actualización
 

@@ -194,7 +194,7 @@ Para editar categorías, modifica examples/category.json y envíalo con PUT a /a
 
 ## Uso de IA y revisión
 
-Se utilizó Codex(ChatGPT Plus) para apoyar la planificación, estructura, escenarios Gherkin, bindings, endpoints, configuración de EF Core y migraciones, documentación y ejemplos, manteniendo al margen su uso mediante reglas y solicitudes de autorizaciones explícitas.
+Se utilizó Codex(ChatGPT Plus) como apoyo para la planificación, estructura, escenarios Gherkin, bindings, endpoints, configuración de EF Core y migraciones, documentación y ejemplos, manteniendo al margen su uso mediante reglas y solicitudes de autorizaciones explícitas para evitar redundancias, vacíos y/o ejecuciones no solicitadas.
 
 Las propuestas se contrastaron con requisitos y se verificaron mediante:
 
@@ -206,7 +206,7 @@ Las propuestas se contrastaron con requisitos y se verificaron mediante:
 
 ## Video de demostración
 
-El video ya está grabado. El enlace será enviado por medio del número telefónico.
+El video ya está grabado. El enlace será eniado por medio del número telefónico.
 
 
 [COVERAGE.md](COVERAGE.md) relaciona requisitos y pruebas. [PROGRESS.md](PROGRESS.md) conserva el historial de verificaciones y [PLAN.md](PLAN.md) el plan de trabajo.
