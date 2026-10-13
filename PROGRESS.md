@@ -2,7 +2,7 @@
 
 ## Etapa actual
 
-PLAN.md actualizado con el estado de entrega confirmado: guion local, pruebas manuales, repaso parcial, video grabado y README preparado. Pendientes: enlace de video, acceso del evaluador, revisión personal del README, repaso restante y ejercicio en vivo. Deploy descartado. Se respetaron las modificaciones en curso del usuario a README.md, sin incluirlas en este cambio. Actualización documental; no se repitieron pruebas.
+PLAN.md actualizado con el estado de entrega confirmado: guion local, pruebas manuales, repaso parcial, video grabado y README preparado. Pendientes: enlace de video, acceso del evaluador, revisión personal del README, repaso restante. Deploy descartado. Se respetaron las modificaciones en curso del usuario a README.md, sin incluirlas en este cambio. Actualización documental; no se repitieron pruebas.
 
 Etapa 9 en preparación de entrega, 13 de octubre de 2026. El usuario confirmó que grabó el video y realizó pruebas manuales en Swagger. Se repasaron endpoints de productos, DbContext y relación Gherkin/Reqnroll/NUnit. Deploy descartado por decisión del usuario. El guion personal permanece local y excluido de Git.
 
@@ -16,7 +16,7 @@ Una primera compilación falló por sintaxis en la edición automática de metad
 
 Copia limpia temporal sin .git/bin/obj/base previa: restore, tool restore, build --no-restore (0 advertencias/errores), test --no-build --no-restore: todos código 0, 92 aprobadas. Servidor real en localhost:5080 con --no-launch-profile: migraciones aplicadas, OpenAPI 3.1.1 y Swagger HTTP 200. curl.exe comprobó POST categoría 201, duplicado 409, POST producto 201, PUT 200, validación 400, restricción exacta 409, DELETE producto/categoría 204. Se detuvo el servidor al terminar. Base del workspace ausente; solo la copia temporal recibió datos. No se verificó otro sistema operativo ni una interacción visual completa del navegador.
 
-README contiene arranque, URLs, importación del contrato, configuración y ejemplos con archivos JSON para evitar diferencias de shell; el id 1 es solo ilustrativo y debe sustituirse. No cambiaron migraciones ni reglas de negocio. Siguiente paso: etapa 9, guion del video, repaso del código y práctica de un cambio en vivo. Comprensión del candidato, grabación/publicación y acceso del evaluador siguen pendientes.
+README contiene arranque, URLs, importación del contrato, configuración y ejemplos con archivos JSON para evitar diferencias de shell; el id 1 es solo ilustrativo y debe sustituirse. No cambiaron migraciones ni reglas de negocio. Siguiente paso: etapa 9, guion del video, repaso del código. Comprensión del candidato, grabación/publicación y acceso del evaluador siguen pendientes.
 
 ### Historial: auditoría de cobertura
 

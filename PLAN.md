@@ -4,7 +4,7 @@ Referencia compartida para saber dónde estamos y qué sigue. Actualizaremos las
 
 ## Punto actual
 
-**Etapas 1–8 completadas; etapa 9 en curso.** Última suite verificada: 92 pruebas aprobadas (85 BDD y 7 técnicas). Guion personal creado solo en local, video grabado según confirmación del usuario y README reorganizado para la entrega, en revisión personal. Falta publicar y verificar el enlace del video, confirmar acceso al repositorio, finalizar el repaso y practicar un cambio pequeño. Deploy descartado por decisión del usuario.
+**Etapas 1–8 completadas; etapa 9 en curso.** Última suite verificada: 92 pruebas aprobadas (85 BDD y 7 técnicas). Guion personal creado solo en local, video grabado según confirmación del usuario y README reorganizado para la entrega, en revisión personal. Falta publicar y verificar el enlace del video, confirmar acceso al repositorio, finalizar el repaso. Deploy descartado por decisión del usuario.
 
 ## Ciclo que repetiremos por comportamiento
 
@@ -109,7 +109,6 @@ Resultado esperado: creación, consulta y edición de productos verificadas medi
 - [x] Realizar pruebas manuales con Swagger (confirmado por el usuario).
 - [x] Repasar el flujo de ProductEndpoints, CatalogoDbContext e integración Gherkin/Reqnroll/NUnit.
 - [ ] Completar el repaso de migraciones y arranque de la aplicación.
-- [ ] Practicar un cambio pequeño en vivo.
 - [x] Usuario: grabar el video (confirmado por el usuario; su contenido no se revisó aquí).
 - [ ] Publicar el video y comprobar que su enlace permita al evaluador reproducirlo.
 - [x] Reorganizar README con ejecución paso a paso, decisiones y motivos, supuestos y revisión del uso de IA.
